@@ -1,0 +1,14 @@
+node_modules/
+.next/
+dist/
+.turbo/
+coverage/
+*.tsbuildinfo
+
+# Secrets never enter the repo. Each app documents its own vars in .env.example.
+.env
+.env.*
+!.env.example
+
+.DS_Store
+*.log

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "NestJS",
+  "extends": "./base.json",
+  "compilerOptions": {
+    /* Nest runs on Node and emits real JS, so unlike the Next config this one
+       actually compiles. CommonJS because Nest's DI relies on decorator
+       metadata that the ESM loader still handles inconsistently. */
+    "module": "CommonJS",
+    "moduleResolution": "Node",
+    "target": "ES2023",
+    "outDir": "./dist",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "noEmit": false,
+    "isolatedModules": false,
+    /* Nest's own scaffolding trips both of these; they are enforced in
+       application code by lint rules instead. */
+    "strictPropertyInitialization": false,
+    "noUncheckedIndexedAccess": false
+  }
+}

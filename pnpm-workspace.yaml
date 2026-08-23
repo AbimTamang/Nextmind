@@ -1,0 +1,10 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+
+# Hoisting these keeps a single copy of the toolchain at the root rather than one
+# per workspace, which matters most for the Next/Nest/TypeScript trio.
+publicHoistPattern:
+  - "*eslint*"
+  - "*prettier*"
+  - "@types/*"

@@ -1,0 +1,105 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main, dev]
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    # The web build is NOT database-free. Public pages use `revalidate = 300`,
+    # so `next build` prerenders them by running real queries - without a
+    # reachable database the build fails at the export step, not at runtime.
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: ci
+          POSTGRES_PASSWORD: ci
+          POSTGRES_DB: ci
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 10.33.4 }
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+
+      # Turbo builds packages before the apps that consume them, so a broken
+      # contract fails here rather than at runtime in whichever app noticed first.
+      - run: pnpm typecheck
+      - run: pnpm lint
+      # Schema first, then migrations - the two together are what a real
+      # environment has; neither builds the database alone.
+      - run: pnpm --filter @nextminds/db sync
+        env:
+          DATABASE_URL: postgres://ci:ci@localhost:5432/ci
+      - run: pnpm db:migrate --env ci
+        env:
+          DATABASE_URL: postgres://ci:ci@localhost:5432/ci
+
+      - run: pnpm build
+        env:
+          DATABASE_URL: postgres://ci:ci@localhost:5432/ci
+          BETTER_AUTH_SECRET: ci-placeholder-secret-not-used-at-runtime
+          BETTER_AUTH_URL: http://localhost:3000
+          NEXT_PUBLIC_SITE_URL: https://www.nextmindsinfosys.com
+
+  migrations:
+    # A real clean-room bootstrap: empty Postgres -> schema.sql -> migrations.
+    # This is the check that proves the database can still be built from the
+    # repo alone, which is what stops a new environment or a restore from
+    # needing a hand-held fix.
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    services:
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: ci
+          POSTGRES_PASSWORD: ci
+          POSTGRES_DB: ci
+        ports: ["5432:5432"]
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+        with: { version: 10.33.4 }
+      - uses: actions/setup-node@v4
+        with: { node-version: 20, cache: pnpm }
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm --filter @nextminds/db check-migrations
+
+      - name: Bootstrap a clean database
+        run: pnpm --filter @nextminds/db sync
+        env: { DATABASE_URL: "postgres://ci:ci@localhost:5432/ci" }
+
+      - name: Migrations must report nothing pending
+        run: |
+          pnpm --filter @nextminds/db exec sequelize-cli db:migrate --env ci
+          pending=$(pnpm --filter @nextminds/db exec sequelize-cli db:migrate:status --env ci | grep -c "^down" || true)
+          echo "pending: $pending"
+          test "$pending" -eq 0
+        env: { DATABASE_URL: "postgres://ci:ci@localhost:5432/ci" }

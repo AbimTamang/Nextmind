@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Next.js",
+  "extends": "./base.json",
+  "compilerOptions": {
+    "lib": ["DOM", "DOM.Iterable", "ES2022"],
+    "jsx": "preserve",
+    "noEmit": true,
+    /* The base turns these on for the publishable packages. A Next app never
+       emits declarations, and leaving them on activates TypeScript's
+       "inferred type cannot be named" portability check (TS2742) against
+       pnpm's symlinked layout - which fails on every function that returns a
+       model instance from a workspace package, for no benefit here. */
+    "declaration": false,
+    "declarationMap": false,
+    "allowJs": true,
+    "incremental": true,
+    "plugins": [{ "name": "next" }],
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    /* Off for the web app only. The base config enables it, and new code in
+       apps/api and packages/* is held to it - but the app moved here from a
+       tsconfig that never had it, and switching it on as a side effect of the
+       move would mean fixing unrelated code in the same change. Turn it on
+       once the existing violations are cleared; tracked in docs/ARCHITECTURE.md. */
+    "noUncheckedIndexedAccess": false
+  }
+}

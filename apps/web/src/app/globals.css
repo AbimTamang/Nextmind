@@ -1,0 +1,475 @@
+@import "tailwindcss";
+
+:root {
+  /* Palette taken from the design canvas (Home / Courses / About artboards).
+   * Stated in oklch exactly as the design does - converting to hex loses the
+   * even lightness steps the ramp depends on.
+   *
+   * The shift from the previous palette is that neutrals are now genuinely
+   * neutral: borders were #deeaf4 and muted text #7a90a8, both blue-tinted,
+   * which made every "grey" on the site read as pale blue. Accent hue lives
+   * only in --nm-teal / --nm-blue now. */
+  --nm-bg: #ffffff;
+  --nm-surface: oklch(0.98 0.003 255);
+  --nm-card: #ffffff;
+  --nm-border: oklch(0.91 0.008 255);
+  --nm-border-soft: oklch(0.94 0.006 255);
+  --nm-light: oklch(0.95 0.04 172);
+  --nm-navy: oklch(0.27 0.05 258);
+  --nm-navy-deep: oklch(0.24 0.06 250);
+  --nm-teal: oklch(0.72 0.15 172);
+  --nm-blue: oklch(0.64 0.15 241);
+  --nm-green: oklch(0.68 0.17 155);
+  --nm-heading: oklch(0.27 0.05 258);
+  --nm-body: oklch(0.4 0.02 258);
+  /* The design uses oklch(0.6 0.01 258) for 11-12.5px card meta text, which is
+   * 3.95:1 on white and fails AA for text that size. This is one step darker -
+   * 4.85:1, and visually indistinguishable at those sizes. */
+  --nm-muted: oklch(0.5 0.02 258);
+  --nm-muted-soft: oklch(0.55 0.02 258);
+  --nm-orange: oklch(0.42 0.12 60);
+  --nm-orange-bg: oklch(0.95 0.06 60);
+  --nm-gradient: linear-gradient(135deg, oklch(0.72 0.15 172), oklch(0.64 0.15 241));
+  /* The pale wash behind the hero and page headers. */
+  --nm-hero-wash: linear-gradient(180deg, oklch(0.97 0.02 190), #fff 65%);
+
+  /* Brand teal is 5.92:1 on navy (passes) but only 2.34:1 on white (fails AA
+   * badly). Fills, borders and icons keep --nm-teal; teal *text* on a light
+   * surface must use this darker ink instead. Spec §1.7. */
+  --nm-teal-ink: oklch(0.5 0.13 200);
+  --nm-teal-ink-deep: oklch(0.32 0.1 200);
+
+  /* ---------------------------------------------------------------------
+   * Design tokens (UI/UX spec §1-§4).
+   *
+   * The existing --nm-* names are kept and now alias into these ramps, so
+   * nothing that already uses them breaks. New work should use the ramp
+   * tokens; a raw hex in a component is a bug.
+   * ------------------------------------------------------------------- */
+
+  /* Navy — surfaces */
+  --navy-900: #061a2e;
+  --navy-800: #0a2540;
+  --navy-700: #0d2b4a;
+  --navy-600: #123a5e;
+  --navy-500: #1b4a73;
+  --navy-400: #2e6390;
+
+  /* Teal — action + accent. -600 is the only teal safe as text on white. */
+  --teal-600: #0f766e;
+  --teal-500: #0d9488;
+  --teal-400: #14b8a6;
+  --teal-300: #2dd4bf;
+  --teal-200: #5eead4;
+  --teal-100: #99f6e4;
+
+  /* Blue — secondary accent */
+  --blue-700: #0b4a7f;
+  --blue-600: #1868a8;
+  --blue-500: #2196f3;
+  --blue-300: #7db8e8;
+  --blue-200: #b5d4f4;
+
+  /* Neutrals */
+  --gray-50: #f7f9fb;
+  --gray-100: #edf1f5;
+  --gray-200: #dde3ea;
+  --gray-300: #c9d2dc;
+  --gray-500: #6b7785;
+  --gray-700: #3d4754;
+  --gray-900: #1a2029;
+
+  /* Semantic. Urgency is --warning, never --danger: red reads as an error,
+     not a deadline. --danger is reserved for form validation. */
+  --success: #16a34a;
+  --warning: #d97706;
+  --danger: #dc2626;
+  --info: #1868a8;
+
+  /* The gradient. One per viewport, on the single primary button only. */
+  --gradient-primary: linear-gradient(135deg, #14b8a6 0%, #2196f3 100%);
+
+  /* Spacing — 4px base, only these steps */
+  --space-1: 4px;   --space-2: 8px;   --space-3: 12px;  --space-4: 16px;
+  --space-5: 20px;  --space-6: 24px;  --space-8: 32px;  --space-10: 40px;
+  --space-12: 48px; --space-16: 64px; --space-20: 80px; --space-24: 96px;
+  --space-30: 120px;
+
+  /* Radius — one per element type */
+  --radius-sm: 8px;    /* inputs, badges */
+  --radius-md: 12px;   /* buttons, tags */
+  --radius-lg: 16px;   /* cards */
+  --radius-xl: 24px;   /* hero panels */
+  --radius-full: 999px;
+
+  /* Elevation. Shadows barely read on navy, so depth there comes from
+     surface lightness + border; these are for light sections. */
+  --shadow-1: 0 4px 16px rgba(26, 32, 41, 0.08);
+  --shadow-2: 0 8px 32px rgba(6, 26, 46, 0.4);
+
+  /* Layout */
+  --container: 1240px;
+  --measure: 60ch;
+
+  /* Motion */
+  --duration-fast: 150ms;
+  --duration-base: 250ms;
+  --duration-slow: 400ms;
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-in-out: cubic-bezier(0.4, 0, 0.2, 1);
+
+  /* Both roles are Manrope. --font-manrope is injected by next/font onto
+     <html> - it has to be <html> and not <body>, because these tokens are
+     resolved on :root, and a var() pointing at a property that is not defined
+     on the resolving element invalidates the whole declaration rather than
+     falling through to the next family in the list. The explicit var()
+     fallback covers the same failure a second way. */
+  --nm-font-sans: var(--font-manrope, "Manrope"), system-ui, sans-serif;
+  --nm-font-display: var(--font-manrope, "Manrope"), system-ui, sans-serif;
+}
+
+@theme inline {
+  /* These MUST point at differently-named variables. Naming the source and the
+     theme key the same thing (`--font-sans: var(--font-sans)`) emits a
+     self-referential declaration into :root that overrides the real value; the
+     cycle makes it invalid and every `font-sans` element silently falls back to
+     the browser default stack. That is what happened to DM Sans here. */
+  --font-sans: var(--nm-font-sans);
+  --font-display: var(--nm-font-display);
+  --color-nm-teal: var(--nm-teal);
+  --color-nm-teal-ink: var(--nm-teal-ink);
+  --color-nm-blue: var(--nm-blue);
+  --color-nm-navy: var(--nm-navy);
+  --color-nm-body: var(--nm-body);
+  --color-nm-muted: var(--nm-muted);
+  --color-nm-surface: var(--nm-surface);
+  /* `bg-nm-card` is used across Navbar, Footer, CoursesListing and the card
+     primitives, but this token was never registered - so the class compiled to
+     nothing and every "white card" rendered transparent. Most visible on the
+     Company dropdown, which showed the dark hero straight through it. */
+  --color-nm-card: var(--nm-card);
+  --color-nm-bg: var(--nm-bg);
+  --color-nm-border: var(--nm-border);
+  --color-nm-light: var(--nm-light);
+  --color-nm-green: var(--nm-green);
+  --color-nm-orange: var(--nm-orange);
+  --color-nm-border-soft: var(--nm-border-soft);
+  --color-nm-navy-deep: var(--nm-navy-deep);
+  --color-nm-muted-soft: var(--nm-muted-soft);
+  --color-nm-orange-bg: var(--nm-orange-bg);
+  --color-nm-teal-ink-deep: var(--nm-teal-ink-deep);
+
+  /* Ramp tokens as Tailwind colours: bg-navy-800, text-teal-600, etc. */
+  --color-navy-900: var(--navy-900);
+  --color-navy-800: var(--navy-800);
+  --color-navy-700: var(--navy-700);
+  --color-navy-600: var(--navy-600);
+  --color-navy-500: var(--navy-500);
+  --color-teal-600: var(--teal-600);
+  --color-teal-500: var(--teal-500);
+  --color-teal-400: var(--teal-400);
+  --color-teal-300: var(--teal-300);
+  --color-teal-200: var(--teal-200);
+  --color-blue-700: var(--blue-700);
+  --color-blue-600: var(--blue-600);
+  --color-blue-300: var(--blue-300);
+  --color-blue-200: var(--blue-200);
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+
+  --radius-sm: var(--radius-sm);
+  --radius-md: var(--radius-md);
+  --radius-lg: var(--radius-lg);
+  --radius-xl: var(--radius-xl);
+}
+
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #deeaf4 transparent;
+}
+
+body {
+  background: var(--nm-bg);
+  color: var(--nm-body);
+  font-family: var(--font-sans);
+}
+
+.font-display {
+  font-family: var(--font-display);
+}
+
+.nm-gradient {
+  background: var(--nm-gradient);
+}
+
+.nm-gradient-text {
+  background: var(--nm-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+@keyframes marquee {
+  0% {
+    transform: translate(0);
+  }
+  to {
+    transform: translate(-50%);
+  }
+}
+
+.animate-marquee {
+  animation: marquee 28s linear infinite;
+}
+
+.scrollbar-none {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.scrollbar-none::-webkit-scrollbar {
+  display: none;
+}
+
+.nm-hero-panel {
+  background: linear-gradient(135deg, var(--nm-navy), #0a3d6e);
+}
+
+.nm-dark-panel {
+  background: linear-gradient(135deg, #030712, #0f172a 55%, #030712);
+}
+
+@keyframes blob-drift-a {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(4%, 6%) scale(1.08);
+  }
+  66% {
+    transform: translate(-3%, 3%) scale(0.95);
+  }
+}
+
+@keyframes blob-drift-b {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(-5%, -4%) scale(0.92);
+  }
+  66% {
+    transform: translate(3%, -5%) scale(1.06);
+  }
+}
+
+@keyframes blob-drift-c {
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+  50% {
+    transform: translate(-4%, 5%) scale(1.1);
+  }
+}
+
+.animate-blob-a {
+  animation: blob-drift-a 14s ease-in-out infinite;
+}
+
+.animate-blob-b {
+  animation: blob-drift-b 18s ease-in-out infinite;
+}
+
+.animate-blob-c {
+  animation: blob-drift-c 11s ease-in-out infinite;
+}
+
+.nm-noise {
+  position: absolute;
+  inset: 0;
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  pointer-events: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/*
+ * Spec §8: the blanket rule, not just the named animations. Anything added
+ * later is covered without having to remember to list it here.
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-blob-a,
+  .animate-blob-b,
+  .animate-blob-c,
+  .animate-marquee {
+    animation: none;
+  }
+}
+
+/* Tiptap's Placeholder extension renders via CSS, not a DOM node - see
+   src/components/admin/rich-text-editor.tsx */
+.tiptap-content p.is-editor-empty:first-child::before {
+  content: attr(data-placeholder);
+  float: left;
+  height: 0;
+  pointer-events: none;
+  color: #9ca3af;
+}
+
+/* ---------------------------------------------------------------- nm-prose
+ *
+ * Styling for admin-authored markdown - course "about" bodies and blog posts,
+ * both rendered through src/components/Markdown.tsx.
+ *
+ * Tailwind's preflight strips borders and spacing from <table>, so without
+ * these rules a GFM salary table renders as columns of text running into each
+ * other. The markup emits these class names, so they must exist here.
+ */
+.nm-prose {
+  color: var(--nm-body);
+  line-height: 1.7;
+  /* Lets the prose column shrink inside a flex/grid parent, so the table
+     wrapper below scrolls internally instead of widening the page. */
+  min-width: 0;
+}
+
+.nm-prose > :first-child { margin-top: 0; }
+.nm-prose > :last-child { margin-bottom: 0; }
+
+.nm-prose h1,
+.nm-prose h2,
+.nm-prose h3,
+.nm-prose h4 {
+  font-family: var(--font-display, inherit);
+  color: var(--nm-heading);
+  font-weight: 700;
+  line-height: 1.25;
+  margin: 2em 0 0.6em;
+}
+
+.nm-prose h1 { font-size: 1.875rem; }
+.nm-prose h2 { font-size: 1.5rem; }
+.nm-prose h3 { font-size: 1.25rem; }
+.nm-prose h4 { font-size: 1.0625rem; font-weight: 600; }
+
+.nm-prose p { margin: 0 0 1.15em; }
+
+.nm-prose ul,
+.nm-prose ol { margin: 0 0 1.15em; padding-left: 1.5rem; }
+.nm-prose ul { list-style: disc; }
+.nm-prose ol { list-style: decimal; }
+.nm-prose li { margin-bottom: 0.4em; }
+.nm-prose li::marker { color: var(--nm-teal-ink); }
+.nm-prose li > ul,
+.nm-prose li > ol { margin: 0.4em 0 0; }
+
+.nm-prose strong { font-weight: 650; color: var(--nm-heading); }
+
+.nm-prose a {
+  color: var(--nm-teal-ink);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  overflow-wrap: anywhere;
+}
+.nm-prose a:hover { color: var(--nm-blue); }
+
+.nm-prose blockquote {
+  margin: 0 0 1.15em;
+  padding: 0.25rem 0 0.25rem 1.15rem;
+  border-left: 3px solid var(--nm-teal);
+  color: var(--nm-muted);
+  font-style: italic;
+}
+
+.nm-prose code {
+  background: var(--nm-light);
+  border-radius: 5px;
+  padding: 0.15em 0.4em;
+  font-size: 0.875em;
+  /* Long unbroken tokens - file paths, exploit identifiers, URLs - have no
+     break opportunity and would otherwise push the page sideways on a phone. */
+  overflow-wrap: anywhere;
+}
+
+.nm-prose pre {
+  margin: 0 0 1.15em;
+  padding: 1rem;
+  border-radius: var(--radius-md);
+  background: var(--nm-navy);
+  color: #ffffff;
+  overflow-x: auto;
+}
+.nm-prose pre code { background: transparent; padding: 0; color: inherit; }
+
+.nm-prose hr { margin: 2em 0; border: 0; border-top: 1px solid var(--nm-border); }
+
+.nm-prose img { max-width: 100%; height: auto; border-radius: var(--radius-md); }
+
+/* -- Tables --------------------------------------------------------------
+ * The wrapper (added by Markdown.tsx) is what scrolls on narrow screens, so a
+ * wide table never forces the whole page to scroll sideways.
+ */
+.nm-prose-table-wrap {
+  margin: 0 0 1.4em;
+  overflow-x: auto;
+  border: 1px solid var(--nm-border);
+  border-radius: var(--radius-md);
+}
+
+.nm-prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9375rem;
+  /* Keeps columns readable rather than crushed; the wrapper scrolls when this
+     exceeds the container. */
+  min-width: 34rem;
+}
+
+/* Navy header band with small-caps labels, matching the course-page design. */
+.nm-prose thead { background: var(--nm-navy); }
+
+.nm-prose th {
+  padding: 0.8rem 1rem;
+  text-align: left;
+  font-size: 0.6875rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.82);
+  white-space: nowrap;
+  border-bottom: 0;
+}
+
+.nm-prose td {
+  padding: 0.75rem 1rem;
+  vertical-align: top;
+  border-bottom: 1px solid var(--nm-border);
+}
+
+.nm-prose tbody tr:last-child td { border-bottom: 0; }
+/* The row label carries the scan-line, so it gets the heading colour. */
+.nm-prose tbody td:first-child { font-weight: 600; color: var(--nm-heading); }
+.nm-prose tbody tr:nth-child(even) { background: color-mix(in srgb, var(--nm-surface) 45%, transparent); }
+
+.nm-prose th[align="right"], .nm-prose td[align="right"] { text-align: right; }
+.nm-prose th[align="center"], .nm-prose td[align="center"] { text-align: center; }
+
+@media (max-width: 640px) {
+  .nm-prose th, .nm-prose td { padding: 0.625rem 0.75rem; }
+  .nm-prose table { font-size: 0.875rem; }
+}

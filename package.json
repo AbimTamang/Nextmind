@@ -1,0 +1,24 @@
+{
+  "name": "nextminds",
+  "private": true,
+  "packageManager": "pnpm@10.33.4",
+  "engines": { "node": ">=20.11" },
+  "scripts": {
+    "dev": "turbo run dev",
+    "build": "turbo run build",
+    "start": "turbo run start",
+    "lint": "turbo run lint",
+    "typecheck": "turbo run typecheck",
+    "test": "turbo run test",
+    "format": "prettier --write \"**/*.{ts,tsx,md,json,yml}\"",
+    "db:migrate": "pnpm --filter @nextminds/db migrate",
+    "db:sync": "pnpm --filter @nextminds/db sync",
+    "db:seed": "pnpm --filter @nextminds/db seed",
+    "clean": "turbo run clean && rm -rf node_modules"
+  },
+  "devDependencies": {
+    "prettier": "^3.4.2",
+    "turbo": "^2.3.3",
+    "typescript": "^5.7.2"
+  }
+}

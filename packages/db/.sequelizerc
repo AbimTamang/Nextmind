@@ -1,0 +1,15 @@
+const path = require("path");
+
+// Paths are relative to this package, not the monorepo root, so `pnpm --filter
+// @nextminds/db migrate` works from anywhere in the workspace.
+//
+// models-path is only consulted by `sequelize-cli model:generate`. The models
+// here are hand-written TypeScript that call Model.init against the shared
+// instance in src/sequelize.ts - do not let the CLI generate a models/index.js
+// beside them, it opens a second connection and only auto-loads .js files.
+module.exports = {
+  config: path.resolve(__dirname, "config", "config.json"),
+  "models-path": path.resolve(__dirname, "src", "models"),
+  "migrations-path": path.resolve(__dirname, "migrations"),
+  "seeders-path": path.resolve(__dirname, "seeders"),
+};
