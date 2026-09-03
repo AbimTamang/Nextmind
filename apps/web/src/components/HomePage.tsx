@@ -1,15 +1,39 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, useRef } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { testimonials } from "@/data/courses";
 import type { CourseCard } from "@/db/queries";
 import { stats } from "@/lib/stats";
-import { borderSoft, colors, ctaBody, ctaEyebrow, ctaGradient, gradient, heroWash, statGradient } from "@/lib/theme";
+import gsap from "gsap";
+import { useGSAP } from "@gsap/react";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+import {
+  borderSoft,
+  colors,
+  ctaBody,
+  ctaEyebrow,
+  ctaGradient,
+  gradient,
+  heroWash,
+  statGradient,
+} from "@/lib/theme";
 import { CourseCardTile } from "./CourseCardTile";
 import EnrollModal from "./EnrollModal";
-import { Briefcase, GraduationCap, Handshake, Rocket, Star, Target, UserCog, Zap } from "lucide-react";
+import {
+  Briefcase,
+  GraduationCap,
+  Handshake,
+  Rocket,
+  Star,
+  Target,
+  UserCog,
+  Zap,
+} from "lucide-react";
+import LogosMarquee from "./LogosMarque";
+
+gsap.registerPlugin(ScrollTrigger, useGSAP);
 
 const tools = [
   "React",
@@ -72,6 +96,14 @@ function Hero({ courses }: { courses: CourseCard[] }) {
   const [visible, setVisible] = useState(true);
   const [modalOpen, setModalOpen] = useState(false);
 
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const badgeRef = useRef<HTMLDivElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const textRef = useRef<HTMLParagraphElement>(null);
+  const ctaRef = useRef<HTMLDivElement>(null);
+  const reviewsRef = useRef<HTMLDivElement>(null);
+  const imageRef = useRef<HTMLDivElement>(null);
+
   useEffect(() => {
     const id = setInterval(() => {
       setVisible(false);
@@ -83,13 +115,24 @@ function Hero({ courses }: { courses: CourseCard[] }) {
     return () => clearInterval(id);
   }, []);
 
+  useGSAP(
+    () => {
+      const tl = gsap.timeline({ defaults: { ease: "power3.out" } });
 
+      tl.from(badgeRef.current, { opacity: 0, y: -12, duration: 0.5 })
+        .from(headingRef.current, { opacity: 0, y: 24, duration: 0.7 }, "-=0.25")
+        .from(textRef.current, { opacity: 0, y: 16, duration: 0.5 }, "-=0.35")
+        .from(ctaRef.current, { opacity: 0, y: 14, duration: 0.5 }, "-=0.3")
+        .from(reviewsRef.current, { opacity: 0, y: 10, duration: 0.4 }, "-=0.25")
+        .from(imageRef.current, { opacity: 0, x: 40, duration: 0.8 }, "-=0.6");
+    },
+    { scope: sectionRef },
+  );
 
   return (
     <section
+      ref={sectionRef}
       className="relative overflow-hidden pt-16"
-      /* A wash that has faded to white by 65% down, so the hero lifts off the
-         page without a hard seam where it meets the stat band below. */
       style={{ background: heroWash }}
     >
       <div className="absolute inset-0 pointer-events-none overflow-hidden">
@@ -114,6 +157,7 @@ function Hero({ courses }: { courses: CourseCard[] }) {
         <div className="grid lg:grid-cols-[1fr_460px] gap-16 items-center">
           <div>
             <div
+              ref={badgeRef}
               className="inline-flex items-center gap-2.5 rounded-full px-4 py-2 text-sm font-semibold mb-8"
               style={{
                 backgroundColor: `${colors.green}15`,
@@ -129,15 +173,15 @@ function Hero({ courses }: { courses: CourseCard[] }) {
             </div>
 
             <h1
+              ref={headingRef}
               className="font-display mb-6 font-extrabold leading-[1.05] tracking-[-1.2px]"
               style={{ fontSize: "clamp(34px,5.2vw,58px)", color: colors.navy }}
             >
-              Learn{" "}
+              Learn
+              <br />
               <span
                 className="inline-block transition-all duration-300"
                 style={{
-                  // NOT colors.teal - the fill teal is 2.29:1 on white and fails AA even
-                  // at this size; large text still needs 3:1. tealInk is 5.29:1.
                   color: colors.tealInk,
                   opacity: visible ? 1 : 0,
                   transform: visible ? "translateY(0)" : "translateY(8px)",
@@ -146,51 +190,58 @@ function Hero({ courses }: { courses: CourseCard[] }) {
                 {rotatingWords[index]}
               </span>
               <br />
-              <span className="text-transparent bg-clip-text" style={{ backgroundImage: statGradient }}>
+              <span
+                className="text-transparent bg-clip-text"
+                style={{ backgroundImage: statGradient }}
+              >
                 Lead Tomorrow
               </span>
             </h1>
 
             <p
+              ref={textRef}
               className="text-lg leading-relaxed mb-10 max-w-[520px]"
               style={{ color: colors.body }}
             >
-              Where your ambition meets opportunities. Nepal&apos;s most career-focused IT training
-              institute — in-person at New Baneshwor and live online.
+              Where your ambition meets opportunities. Nepal&apos;s most career focused IT training
+              institute in person at New Baneshwor and live online.
             </p>
 
-            <div className="flex flex-wrap gap-4 mb-12">
+            <div ref={ctaRef} className="flex flex-wrap gap-4 mb-12">
               <Link
                 href="/courses"
                 className="min-h-[48px] inline-flex items-center rounded-xl border-[1.5px] border-nm-teal px-9 py-4 text-base font-semibold text-nm-teal-ink transition-all hover:bg-nm-teal/10 active:scale-95"
               >
                 Explore courses
               </Link>
-              <button
-                type="button"
-                onClick={() => setModalOpen(true)}
-                className="min-h-[48px] rounded-xl px-9 py-4 text-base font-bold text-white transition-all active:scale-95"
-                style={{ background: gradient, boxShadow: `0 6px 24px ${colors.teal}40` }}
+              <Link
+                href="#"
+                onClick={(e) => {
+                  e.preventDefault();
+                  setModalOpen(true);
+                }}
+                className="inline-flex min-h-[48px] cursor-pointer items-center rounded-xl border-2 px-9 py-4 font-bold transition-all duration-200"
+                style={{ borderColor: "#0396CA", color: "#0396CA" }}
                 onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = colors.teal;
-                  e.currentTarget.style.color = colors.teal;
+                  e.currentTarget.style.backgroundColor = "#0396CA";
+                  e.currentTarget.style.color = "#fff";
                 }}
                 onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = colors.border;
-                  e.currentTarget.style.color = colors.navy;
+                  e.currentTarget.style.backgroundColor = "transparent";
+                  e.currentTarget.style.color = "#0396CA";
                 }}
               >
                 Book free counselling
-              </button>
+              </Link>
             </div>
 
-            <div className="flex flex-wrap items-center gap-2.5">
+            <div ref={reviewsRef} className="flex flex-wrap items-center gap-2.5">
               <div className="flex">
                 {avatarTints.map((c, i) => (
                   <div
                     key={c}
                     aria-hidden="true"
-                    className="h-[30px] w-[30px] rounded-full border-2 border-white"
+                    className="h-[30px] w-[30px] rounded-full border-2 border-white "
                     style={{ background: c, marginLeft: i === 0 ? 0 : -8 }}
                   />
                 ))}
@@ -204,7 +255,7 @@ function Hero({ courses }: { courses: CourseCard[] }) {
             </div>
           </div>
 
-          <div className="hidden lg:block relative">
+          <div ref={imageRef} className="hidden lg:block relative">
             <div
               className="relative rounded-3xl overflow-hidden"
               style={{
@@ -228,9 +279,6 @@ function Hero({ courses }: { courses: CourseCard[] }) {
                 }}
               />
             </div>
-
-
-
           </div>
         </div>
       </div>
@@ -264,13 +312,99 @@ function ToolsMarquee() {
     </div>
   );
 }
+function AboutUs() {
+  const sectionRef = useRef<HTMLDivElement>(null);
+  const imageRef = useRef<HTMLDivElement>(null);
+  const eyebrowRef = useRef<HTMLDivElement>(null);
+  const headingRef = useRef<HTMLHeadingElement>(null);
+  const textRef = useRef<HTMLParagraphElement>(null);
+  const buttonRef = useRef<HTMLDivElement>(null);
 
+  useGSAP(
+    () => {
+      const tl = gsap.timeline({
+        defaults: { ease: "power3.out" },
+        scrollTrigger: {
+          trigger: sectionRef.current,
+          start: "top 75%",
+          toggleActions: "play none none reverse",
+        },
+      });
+
+      tl.from(imageRef.current, { opacity: 0, x: -40, duration: 0.7 })
+        .from(eyebrowRef.current, { opacity: 0, y: 12, duration: 0.4 }, "-=0.4")
+        .from(headingRef.current, { opacity: 0, y: 20, duration: 0.5 }, "-=0.2")
+        .from(textRef.current, { opacity: 0, y: 16, duration: 0.5 }, "-=0.3")
+        .from(buttonRef.current, { opacity: 0, y: 12, duration: 0.4 }, "-=0.3");
+    },
+    { scope: sectionRef },
+  );
+
+  return (
+    <section ref={sectionRef} className="px-6 py-[70px]">
+      <div className="mx-auto max-w-[1240px] grid lg:grid-cols-2 gap-12 items-center">
+        <div ref={imageRef} className="relative">
+          <div
+            className="relative rounded-3xl overflow-hidden"
+            style={{
+              height: "360px",
+              border: `1px solid ${colors.border}`,
+              boxShadow: "0 24px 64px rgba(13,45,82,0.12)",
+            }}
+          >
+            <Image
+              src="/assets/hero-campus.jpg"
+              alt="Next Minds team and students"
+              fill
+              sizes="600px"
+              className="object-cover"
+            />
+          </div>
+        </div>
+        <div>
+          <div
+            ref={eyebrowRef}
+            className="mb-2 text-[13px] font-bold uppercase tracking-[0.06em]"
+            style={{ color: colors.tealInk }}
+          >
+            About Us
+          </div>
+          <h2
+            ref={headingRef}
+            className="font-display mb-5 font-extrabold tracking-[-0.6px]"
+            style={{ fontSize: "clamp(24px,3.4vw,34px)", color: colors.navy }}
+          >
+            Nepal&apos;s most career-focused IT training institute
+          </h2>
+          <p
+            ref={textRef}
+            className="mb-8 text-[15.5px] leading-relaxed"
+            style={{ color: colors.body }}
+          >
+            We&apos;ve helped thousands of students build real skills and land real jobs. Our
+            instructors are active industry professionals, our curriculum is built around what
+            employers actually need, and our hiring partners give every graduate a direct path into
+            the workforce.
+          </p>
+          <div ref={buttonRef} className="inline-block">
+            <Link
+              href="/about"
+              className="inline-flex items-center justify-center rounded-xl border-[1.5px] border-nm-teal px-8 py-3.5 text-[15px] font-semibold text-nm-teal-ink transition-all hover:bg-nm-teal/10 active:scale-95"
+            >
+              Learn more about us
+            </Link>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
 
 function PopularCourses({ courses }: { courses: CourseCard[] }) {
   const [active, setActive] = useState("All");
+  const [modalOpen, setModalOpen] = useState(false);
+  const [selectedCourse, setSelectedCourse] = useState<CourseCard | null>(null);
 
-  // Derived from the data rather than hard-coded, so a new category added in the
-  // admin dashboard shows up here without a code change.
   const categories = useMemo(
     () => ["All", ...Array.from(new Set(courses.map((c) => c.category)))],
     [courses],
@@ -280,33 +414,32 @@ function PopularCourses({ courses }: { courses: CourseCard[] }) {
   return (
     <section className="px-6 py-[70px]">
       <div className="mx-auto max-w-[1240px]">
-        <div className="mb-3.5 flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <div
-              className="mb-2 text-[13px] font-bold uppercase tracking-[0.06em]"
-              style={{ color: colors.tealInk }}
-            >
-              Our Courses
-            </div>
+        <div
+          className="mb-10 flex flex-wrap items-end justify-between gap-6"
+          style={{ borderColor: colors.border }}
+        >
+          <div className="pb-6">
             <h2
               className="font-display font-extrabold tracking-[-0.6px]"
-              style={{ fontSize: "clamp(24px,3.4vw,34px)", color: colors.navy }}
+              style={{ fontSize: "clamp(26px,3.6vw,36px)", color: colors.navy }}
             >
-              Find your path to a
-              <br />
-              future-proof career
+              Find your path to a future-proof career
             </h2>
+            <p className="mt-2 text-[15px]" style={{ color: colors.body }}>
+              {courses.length} courses, built with hiring partners across {categories.length - 1}{" "}
+              tracks.
+            </p>
           </div>
           <Link
             href="/courses"
-            className="flex-shrink-0 text-[14.5px] font-bold transition-colors"
+            className="flex-shrink-0 pb-6 text-[14.5px] font-bold"
             style={{ color: colors.tealInk }}
           >
-            View all courses →
+            View all courses
           </Link>
         </div>
 
-        <div className="flex gap-2 overflow-x-auto py-5 pb-[26px]">
+        <div className="mb-10 flex gap-7 overflow-x-auto">
           {categories.map((cat) => {
             const on = cat === active;
             return (
@@ -315,25 +448,41 @@ function PopularCourses({ courses }: { courses: CourseCard[] }) {
                 type="button"
                 onClick={() => setActive(cat)}
                 aria-pressed={on}
-                className="flex-shrink-0 whitespace-nowrap rounded-full px-[18px] py-2.5 text-[13.5px] font-bold transition-colors"
-                style={
-                  on
-                    ? { background: colors.teal, color: "#fff", border: `1px solid ${colors.teal}` }
-                    : { background: "#fff", color: colors.navy, border: `1px solid ${colors.border}` }
-                }
+                className="relative flex-shrink-0 whitespace-nowrap pb-3 text-[14.5px] font-semibold transition-colors"
+                style={{ color: on ? colors.navy : colors.body }}
               >
                 {cat}
+                <span
+                  className="absolute inset-x-0 -bottom-px h-[2px] rounded-full transition-transform duration-300"
+                  style={{
+                    background: colors.teal,
+                    transform: on ? "scaleX(1)" : "scaleX(0)",
+                  }}
+                />
               </button>
             );
           })}
         </div>
 
-        <div className="grid gap-5 [grid-template-columns:repeat(auto-fit,minmax(280px,1fr))]">
+        <div className="grid gap-5 [grid-template-columns:repeat(auto-fit,minmax(300px,1fr))]">
           {visible.map((course) => (
-            <CourseCardTile key={course.id} course={course} />
+            <CourseCardTile
+              key={course.id}
+              course={course}
+              onEnroll={(c) => {
+                setSelectedCourse(c);
+                setModalOpen(true);
+              }}
+            />
           ))}
         </div>
       </div>
+
+      <EnrollModal
+        isOpen={modalOpen}
+        onClose={() => setModalOpen(false)}
+        courses={selectedCourse ? [selectedCourse] : courses}
+      />
     </section>
   );
 }
@@ -343,10 +492,7 @@ function StatsStrip() {
     // A hairline band, not a panel: the design separates it from the hero with
     // rules top and bottom rather than a fill, so the eye reads it as a caption
     // to the hero rather than as its own section.
-    <section
-      className="border-y px-6 py-7"
-      style={{ borderColor: borderSoft }}
-    >
+    <section className="border-y px-6 py-7" style={{ borderColor: borderSoft }}>
       <div className="mx-auto grid max-w-[1240px] gap-6 text-center [grid-template-columns:repeat(auto-fit,minmax(150px,1fr))]">
         {stripStats.map((s) => (
           <div key={s.l}>
@@ -402,34 +548,19 @@ function Testimonials() {
   return (
     <section className="px-6 py-[70px]" style={{ backgroundColor: "#f9fafb" }}>
       <div className="mx-auto max-w-[1240px]">
-        <div className="mb-9 flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <div
-              className="mb-2 text-[13px] font-bold uppercase tracking-[0.06em]"
-              style={{ color: colors.tealInk }}
-            >
-              Student Stories
-            </div>
-            <h2
-              className="font-display font-extrabold tracking-[-0.6px]"
-              style={{ fontSize: "clamp(24px,3.4vw,34px)", color: colors.navy }}
-            >
-              What our students say
-            </h2>
-          </div>
-          <Link
-            href="/testimonials"
-            className="hidden text-[14.5px] font-bold sm:block"
+        <div className="mb-9 flex flex-col items-center gap-2 text-center">
+          <div
+            className="text-[13px] font-bold uppercase tracking-[0.06em]"
             style={{ color: colors.tealInk }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.color = colors.blue;
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.color = colors.teal;
-            }}
           >
-            View All →
-          </Link>
+            Student Stories
+          </div>
+          <h2
+            className="font-display font-extrabold tracking-[-0.6px]"
+            style={{ fontSize: "clamp(24px,3.4vw,34px)", color: colors.navy }}
+          >
+            What our students say
+          </h2>
         </div>
 
         <div className="relative">
@@ -438,65 +569,53 @@ function Testimonials() {
               className="flex transition-transform duration-500 ease-out"
               style={{ transform: `translateX(-${current * 100}%)` }}
             >
-              {testimonials.map((t, i) => {
-                const highlight = i % perView === 1;
-                return (
-                  <div
-                    key={t.name}
-                    className="flex-shrink-0 px-2.5"
-                    style={{ width: `${100 / perView}%` }}
-                  >
+              {testimonials.map((t) => (
+                <div
+                  key={t.name}
+                  className="flex-shrink-0 px-2.5"
+                  style={{ width: `${100 / perView}%` }}
+                >
+                  <div className="flex h-full flex-col items-center px-6 py-8 text-center">
+                    <div className="relative mb-5 h-16 w-16 overflow-hidden rounded-full">
+                      <Image
+                        src={t.photo}
+                        alt={t.name}
+                        fill
+                        sizes="64px"
+                        className="object-cover"
+                      />
+                    </div>
+
                     <div
-                      className="flex h-full flex-col rounded-[20px] p-7"
-                      style={{
-                        backgroundColor: colors.card,
-                        border: `1px solid ${highlight ? `${colors.teal}50` : colors.border}`,
-                        boxShadow: highlight
-                          ? `0 8px 40px ${colors.teal}12`
-                          : "0 2px 12px rgba(13,45,82,0.04)",
-                      }}
+                      className="font-display text-[18px] font-bold"
+                      style={{ color: colors.navy }}
                     >
-                      {highlight && (
-                        <div
-                          className="h-1 rounded-t-xl -mt-6 -mx-6 mb-5"
-                          style={{ background: gradient }}
+                      {t.name}
+                    </div>
+                    <div
+                      className="mb-4 text-[12px] font-semibold uppercase tracking-[0.05em]"
+                      style={{ color: colors.mutedSoft }}
+                    >
+                      {t.role}
+                    </div>
+
+                    <p className="mb-5 text-sm leading-relaxed" style={{ color: colors.body }}>
+                      "{t.quote}"
+                    </p>
+
+                    <div className="mt-auto flex gap-1">
+                      {Array.from({ length: 5 }).map((_, s) => (
+                        <Star
+                          key={s}
+                          size={15}
+                          aria-hidden="true"
+                          className="fill-warning text-warning"
                         />
-                      )}
-                      <div className="flex gap-1 mb-4">
-                        {Array.from({ length: 5 }).map((_, s) => (
-                          <Star key={s} size={15} aria-hidden="true" className="fill-warning text-warning" />
-                        ))}
-                      </div>
-                      <p
-                        className="text-sm leading-relaxed mb-6 flex-1"
-                        style={{ color: colors.body }}
-                      >
-                        “{t.quote}”
-                      </p>
-                      <div
-                        className="flex items-center gap-3 pt-4 border-t"
-                        style={{ borderColor: colors.border }}
-                      >
-                        <div
-                            aria-hidden="true"
-                            className="flex h-11 w-11 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold text-white"
-                            style={{ background: gradient }}
-                          >
-                            {initialsOf(t.name)}
-                          </div>
-                        <div>
-                          <div className="text-[14.5px] font-extrabold" style={{ color: colors.navy }}>
-                            {t.name}
-                          </div>
-                          <div className="text-[13px]" style={{ color: colors.mutedSoft }}>
-                            {t.role}
-                          </div>
-                        </div>
-                      </div>
+                      ))}
                     </div>
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </div>
           </div>
 
@@ -564,6 +683,22 @@ function Testimonials() {
             </div>
           )}
         </div>
+
+        <div className="mt-9 text-center">
+          <Link
+            href="/testimonials"
+            className="text-[14.5px] font-bold"
+            style={{ color: colors.tealInk }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = colors.blue;
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = colors.teal;
+            }}
+          >
+            View All →
+          </Link>
+        </div>
       </div>
     </section>
   );
@@ -573,7 +708,7 @@ function Process() {
   return (
     <section className="px-6 py-[70px]">
       <div className="mx-auto max-w-[1000px]">
-        <div className="mb-11 text-center">
+        <div className="mb-16 text-center">
           <div
             className="mb-2 text-[13px] font-bold uppercase tracking-[0.06em]"
             style={{ color: colors.tealInk }}
@@ -584,16 +719,32 @@ function Process() {
             className="font-display font-extrabold tracking-[-0.6px]"
             style={{ fontSize: "clamp(24px,3.4vw,34px)", color: colors.navy }}
           >
-            Your journey from zero to hero
+            Your journey from{" "}
+            <span className="bg-clip-text text-transparent" style={{ backgroundImage: gradient }}>
+              zero to hero
+            </span>
           </h2>
         </div>
 
-        <div className="grid gap-7 [grid-template-columns:repeat(auto-fit,minmax(220px,1fr))]">
+        <div className="relative grid gap-7 [grid-template-columns:repeat(auto-fit,minmax(220px,1fr))]">
+          <div
+            className="absolute top-8 hidden h-[2px] sm:block"
+            style={{
+              left: "calc(100% / 6)",
+              right: "calc(100% / 6)",
+              background: `linear-gradient(90deg, ${colors.border} 0%, ${colors.teal}40 50%, ${colors.border} 100%)`,
+            }}
+            aria-hidden
+          />
+
           {processSteps.map((s, i) => (
-            <div key={s.title} className="text-center">
+            <div key={s.title} className="group relative text-center">
               <div
-                className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-[14px] text-lg font-extrabold text-white"
-                style={{ background: gradient }}
+                className="mx-auto mb-5 flex h-16 w-16 items-center justify-center rounded-2xl text-2xl font-extrabold text-white grayscale transition-all duration-500 ease-out group-hover:scale-110 group-hover:grayscale-0"
+                style={{
+                  background: gradient,
+                  boxShadow: `0 0 0 8px #fff, 0 10px 28px ${colors.teal}40`,
+                }}
               >
                 {i + 1}
               </div>
@@ -617,38 +768,55 @@ function FinalCta({ courses }: { courses: CourseCard[] }) {
   return (
     // Full-bleed in the design rather than an inset rounded card: the band runs
     // edge to edge so the page ends on a hard colour change into the footer.
-    <section className="px-6 py-[70px] text-white" style={{ background: ctaGradient }}>
-      <div className="mx-auto max-w-[760px] text-center">
+    <section
+      className="relative overflow-hidden px-6 py-[84px] text-white"
+      style={{ background: ctaGradient }}
+    >
+      {/* Decorative glow, kept subtle so it doesn't fight the text */}
+      <div
+        className="pointer-events-none absolute -top-24 left-1/2 h-[400px] w-[600px] -translate-x-1/2 rounded-full opacity-20 blur-3xl"
+        style={{ background: "radial-gradient(circle, #fff, transparent 70%)" }}
+        aria-hidden
+      />
+
+      <div className="relative mx-auto max-w-[760px] text-center">
         <div
-          className="mb-4 text-[12.5px] font-bold uppercase tracking-[0.05em]"
-          style={{ color: ctaEyebrow }}
+          className="mb-5 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-[12.5px] font-bold uppercase tracking-[0.05em]"
+          style={{ backgroundColor: "rgba(255,255,255,0.12)", color: ctaEyebrow }}
         >
+          <span className="h-1.5 w-1.5 rounded-full bg-current" />
           {`${nextIntakeLabel()} batch — limited seats remaining`}
         </div>
+
         <h2
-          className="font-display mb-3.5 font-extrabold tracking-[-0.8px]"
-          style={{ fontSize: "clamp(26px,4vw,38px)" }}
+          className="font-display mb-4 font-extrabold leading-[1.15] tracking-[-0.8px]"
+          style={{ fontSize: "clamp(28px,4.4vw,42px)" }}
         >
           Start your tech career today.
         </h2>
-        <p className="mx-auto mb-[30px] text-[15.5px]" style={{ color: ctaBody }}>
+
+        <p
+          className="mx-auto mb-9 max-w-[480px] text-[16px] leading-relaxed"
+          style={{ color: ctaBody }}
+        >
           Book a free 30-minute counselling session and find the perfect course for your goals.
         </p>
-        <div className="flex flex-wrap justify-center gap-3">
+
+        <div className="flex flex-wrap justify-center gap-3.5">
           <button
             type="button"
             onClick={() => setModalOpen(true)}
-            className="rounded-xl bg-white px-7 py-3.5 text-[15px] font-bold transition-transform active:scale-95"
+            className="rounded-xl bg-white px-8 py-4 text-[15px] font-bold shadow-[0_8px_24px_rgba(0,0,0,0.15)] transition-all hover:-translate-y-0.5 hover:shadow-[0_12px_32px_rgba(0,0,0,0.2)] active:scale-95"
             style={{ color: colors.navyDeep }}
           >
-            Book Free Counselling
+            Book free counselling
           </button>
           <Link
             href="/courses"
-            className="rounded-xl px-7 py-3.5 text-[15px] font-bold text-white transition-colors hover:bg-white/10"
-            style={{ border: "1px solid rgba(255,255,255,0.3)" }}
+            className="rounded-xl px-8 py-4 text-[15px] font-bold text-white transition-all hover:-translate-y-0.5 hover:bg-white/10"
+            style={{ border: "1.5px solid rgba(255,255,255,0.35)" }}
           >
-            Browse All Courses
+            Browse all courses
           </Link>
         </div>
       </div>
@@ -657,8 +825,6 @@ function FinalCta({ courses }: { courses: CourseCard[] }) {
     </section>
   );
 }
-
-
 /**
  * Next intake label, derived from today rather than hardcoded.
  *
@@ -675,16 +841,17 @@ function nextIntakeLabel() {
 export default function HomePage({ courses }: { courses: CourseCard[] }) {
   return (
     <>
-      
-        <Hero courses={courses} />
-        {/* The design places the stat band immediately under the hero, where it
+      <Hero courses={courses} />
+      {/* The design places the stat band immediately under the hero, where it
             reads as a caption to it, and the tools marquee after. */}
-        <StatsStrip />
-        <ToolsMarquee />
-        <PopularCourses courses={courses} />
-        <Testimonials />
-        <Process />
-        <FinalCta courses={courses} />
+      <StatsStrip />
+      <ToolsMarquee />
+      <AboutUs />
+      <PopularCourses courses={courses} />
+      <Testimonials />
+      <LogosMarquee />
+      <Process />
+      <FinalCta courses={courses} />
     </>
   );
 }

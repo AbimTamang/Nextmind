@@ -21,8 +21,7 @@ const mobileLinks = [
   { href: "/enterprise", label: "Enterprise" },
   { href: "/about", label: "About Us" },
   { href: "/blog", label: "Blog" },
-  { href: "/success-stories", label: "Success Stories" },
-  { href: "/testimonials", label: "Testimonials" },
+  { href: "/stories", label: "Testimonials" },
   { href: "/partners", label: "Partners" },
   { href: "/contact", label: "Contact" },
 ];

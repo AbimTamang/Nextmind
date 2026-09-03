@@ -1,17 +1,17 @@
 import SiteLayout from "@/components/SiteLayout";
-import SuccessStoriesPage from "./success-stories-content";
+import StoriesPage from "./stories-content";
 
 export const metadata = {
-  title: "Success Stories",
+  title: "Testimonials",
   description:
-    "Graduates of Next Minds Infosys and where their careers went next.",
-  openGraph: { title: "Success Stories", description: "Graduates of Next Minds Infosys and where their careers went next." },
+    "What our students say about training at Next Minds Infosys — graduate spotlights and student reviews.",
+  openGraph: {
+    title: "Testimonials",
+    description:
+      "What our students say about training at Next Minds Infosys — graduate spotlights and student reviews.",
+  },
 };
 
-
-// SiteLayout queries Postgres for footer course links; force dynamic
-// rendering so that query runs per-request, not against a build-time
-// placeholder connection (see src/db/sequelize.ts).
 /**
  * Cached and revalidated rather than rendered per request.
  *
@@ -27,7 +27,7 @@ export const revalidate = 300;
 export default function Page() {
   return (
     <SiteLayout>
-      <SuccessStoriesPage />
+      <StoriesPage />
     </SiteLayout>
   );
 }

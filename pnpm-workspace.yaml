@@ -1,6 +1,12 @@
 packages:
   - "apps/*"
   - "packages/*"
+allowBuilds:
+  '@scarf/scarf': true
+  '@sentry/cli': true
+  esbuild: true
+  sharp: true
+  unrs-resolver: true
 
 # Hoisting these keeps a single copy of the toolchain at the root rather than one
 # per workspace, which matters most for the Next/Nest/TypeScript trio.

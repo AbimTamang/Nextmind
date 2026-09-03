@@ -1,14 +1,14 @@
 [
-  { "name": "Leapfrog Technology", "emoji": "🐸", "type": "Hiring Partner" },
-  { "name": "CloudFactory", "emoji": "☁️", "type": "Hiring Partner" },
-  { "name": "Deerwalk", "emoji": "🦌", "type": "Hiring Partner" },
-  { "name": "NIC Asia Bank", "emoji": "🏦", "type": "Hiring Partner" },
-  { "name": "Daraz Nepal", "emoji": "🛒", "type": "Hiring Partner" },
-  { "name": "Cotiviti Nepal", "emoji": "💊", "type": "Hiring Partner" },
-  { "name": "F1Soft", "emoji": "💳", "type": "Hiring Partner" },
-  { "name": "Fusemachines", "emoji": "🤖", "type": "Technology Partner" },
-  { "name": "Khalti", "emoji": "💜", "type": "Hiring Partner" },
-  { "name": "eSewa", "emoji": "🟢", "type": "Hiring Partner" },
-  { "name": "Vianet", "emoji": "📡", "type": "Technology Partner" },
-  { "name": "Ncell", "emoji": "📱", "type": "Technology Partner" }
+  { "name": "Leapfrog Technology", "Logos": "/Logo/Leaf.png", "type": "Hiring Partner" },
+  { "name": "CloudFactory", "Logos": "/Logo/Cloudfactory.png", "type": "Hiring Partner" },
+  { "name": "Deerwalk", "Logos": "/Logo/Deerwalk.jpeg", "type": "Hiring Partner" },
+  { "name": "NIC Asia Bank", "Logos": "/Logo/NicAsia.png", "type": "Hiring Partner" },
+  { "name": "Daraz Nepal", "Logos": "/Logo/Daraz.png", "type": "Hiring Partner" },
+  { "name": "Cotiviti Nepal", "Logos": "/Logo/Cotivity.jpeg", "type": "Hiring Partner" },
+  { "name": "F1Soft", "Logos": "/Logo/F1Soft.png", "type": "Hiring Partner" },
+  { "name": "Fusemachines", "Logos": "/Logo/fusemachine.jpeg", "type": "Technology Partner" },
+  { "name": "Khalti", "Logos": "/Logo/Khalti.png", "type": "Hiring Partner" },
+  { "name": "eSewa", "Logos": "/Logo/Esewa.jpeg", "type": "Hiring Partner" },
+  { "name": "Vianet", "Logos": "/Logo/Vianet.png", "type": "Technology Partner" },
+  { "name": "Ncell", "Logos": "/Logo/Ncell.jpeg", "type": "Technology Partner" }
 ]

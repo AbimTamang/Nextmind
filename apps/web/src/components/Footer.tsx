@@ -11,8 +11,7 @@ import { socialLinks, whatsappPath } from "./SocialIcons";
 const companyFooterLinks = [
   { href: "/about", label: "About Us" },
   { href: "/blog", label: "Blog" },
-  { href: "/success-stories", label: "Success Stories" },
-  { href: "/testimonials", label: "Testimonials" },
+  { href: "/stories", label: "Testimonials" },
   { href: "/partners", label: "Partners" },
   { href: "/enterprise", label: "Enterprise" },
 ];
@@ -34,8 +33,7 @@ function ColTitle({ children }: { children: React.ReactNode }) {
   );
 }
 
-const linkClass =
-  "text-[13.5px] transition-colors hover:text-nm-teal-ink";
+const linkClass = "text-[13.5px] transition-colors hover:text-nm-teal-ink";
 
 export default function Footer({ courses }: { courses: CourseCard[] }) {
   return (
@@ -44,7 +42,10 @@ export default function Footer({ courses }: { courses: CourseCard[] }) {
     // the dark CTA band instead, so anything decorative here competes with it.
     <footer
       className="px-6 pt-[50px] pb-[26px]"
-      style={{ backgroundColor: colors.bg, borderTop: `1px solid ${borderSoft}` }}
+      style={{
+        background: "linear-gradient(180deg, #ffffff 0%, #ffffff 40%, #e6f7f5 70%, #d6f0fa 100%)",
+        borderTop: `1px solid ${borderSoft}`,
+      }}
     >
       <div className="mx-auto grid max-w-[1240px] grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_1.3fr]">
         <div>
@@ -110,7 +111,12 @@ export default function Footer({ courses }: { courses: CourseCard[] }) {
           <ColTitle>Company</ColTitle>
           <div className="flex flex-col gap-2.5">
             {companyFooterLinks.map((l) => (
-              <Link key={l.href} href={l.href} className={linkClass} style={{ color: colors.muted }}>
+              <Link
+                key={l.href}
+                href={l.href}
+                className={linkClass}
+                style={{ color: colors.muted }}
+              >
                 {l.label}
               </Link>
             ))}
@@ -121,8 +127,16 @@ export default function Footer({ courses }: { courses: CourseCard[] }) {
           <ColTitle>Contact</ColTitle>
           <div className="flex flex-col gap-2.5">
             {contactRows.map((r) => (
-              <div key={r.text} className="flex gap-2.5 text-[13.5px]" style={{ color: colors.muted }}>
-                <r.icon size={15} aria-hidden="true" className="mt-0.5 flex-shrink-0 text-nm-teal-ink" />
+              <div
+                key={r.text}
+                className="flex gap-2.5 text-[13.5px]"
+                style={{ color: colors.muted }}
+              >
+                <r.icon
+                  size={15}
+                  aria-hidden="true"
+                  className="mt-0.5 flex-shrink-0 text-nm-teal-ink"
+                />
                 {r.href ? (
                   <a
                     href={r.href}
