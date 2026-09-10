@@ -289,28 +289,10 @@ export default function CoursesListing({ courses }: { courses: CourseCard[] }) {
                 <motion.div key={course.id} variants={fadeUp} className="h-full">
                   <CourseCardTile
                     course={course}
-                    action={
-                      <>
-                        <Link
-                          href={`/courses/${course.slug}`}
-                          className="rounded-[9px] px-4 py-2.5 text-[13.5px] font-bold transition-colors hover:bg-nm-surface"
-                          style={{ border: `1px solid ${colors.border}`, color: colors.navy }}
-                        >
-                          Details
-                        </Link>
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setPreselect(course.id);
-                            setModalOpen(true);
-                          }}
-                          className="rounded-[9px] px-4 py-2.5 text-[13.5px] font-bold text-white transition-transform active:scale-95"
-                          style={{ background: gradient }}
-                        >
-                          Enroll
-                        </button>
-                      </>
-                    }
+                    onEnroll={(c) => {
+                      setPreselect(c.id);
+                      setModalOpen(true);
+                    }}
                   />
                 </motion.div>
               ))}

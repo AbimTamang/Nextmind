@@ -2,38 +2,29 @@
 
 import { useState } from "react";
 import { contact, directionsHref, mapEmbedHref } from "@/lib/contact";
-import Link from "next/link";
 import { useForm, useWatch } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { colors, gradient, heroGradient } from "@/lib/theme";
+import { borderSoft, colors, gradient, heroWash } from "@/lib/theme";
 import { contactSchema, type ContactInput, type ContactFormValues } from "@/lib/schemas";
 import {
-  Building2,
-  CalendarDays,
   CheckCircle2,
   Clock,
-  GraduationCap,
   Mail,
   MapPin,
   Phone,
+  Send,
 } from "lucide-react";
 
 const contactInfo = [
-  { icon: MapPin, label: "Address", value: contact.address.full },
-  { icon: Phone, label: "Phone", value: contact.phoneDisplay },
-  { icon: Mail, label: "Email", value: contact.email },
-  { icon: Clock, label: "Hours", value: contact.hours },
-];
-
-const quickLinks = [
-  { icon: CalendarDays, label: "Book free counselling", href: "/contact#enquiry" },
-  { icon: Building2, label: "Enterprise enquiry", href: "/enterprise" },
-  { icon: GraduationCap, label: "Browse courses", href: "/courses" },
+  { icon: MapPin, label: "Address", value: contact.address.full, href: contact.maps.place },
+  { icon: Phone, label: "Phone", value: contact.phoneDisplay, href: `tel:${contact.phoneE164}` },
+  { icon: Mail, label: "Email", value: contact.email, href: `mailto:${contact.email}` },
+  { icon: Clock, label: "Hours", value: contact.hours, href: null },
 ];
 
 const inputStyle = {
-  border: `1.5px solid ${colors.border}`,
-  backgroundColor: colors.surface,
+  border: `1px solid ${colors.border}`,
+  backgroundColor: "#f8f8fd",
   color: colors.navy,
 };
 
@@ -82,244 +73,232 @@ export default function ContactPage() {
   };
 
   return (
-    <>
-      <div className="pt-16 min-h-screen" style={{ backgroundColor: colors.bg }}>
-        <section className="py-20 px-6" style={{ background: heroGradient }}>
-          <div className="max-w-[1240px] mx-auto text-center">
-            <div
-              className="inline-flex items-center gap-2 border rounded-full px-4 py-1.5 text-xs font-bold tracking-widest uppercase mb-6"
-              style={{
-                backgroundColor: `${colors.teal}20`,
-                borderColor: `${colors.teal}40`,
-                color: colors.teal,
-              }}
-            >
-              Get In Touch
-            </div>
-            <h1
-              className="font-display font-bold text-white mb-4"
-              style={{ fontSize: "clamp(2rem,4vw,3.5rem)" }}
-            >
-              We&apos;d Love to <span style={{ color: colors.teal }}>Hear From You</span>
-            </h1>
-            <p className="text-lg max-w-lg mx-auto" style={{ color: "rgba(255,255,255,0.65)" }}>
-              Questions about a course? Interested in enterprise training? Just want to say hi?
-              We&apos;re here.
+    <div className="min-h-screen pt-16" style={{ backgroundColor: "#fbfbfd" }}>
+      <section
+        className="border-b px-6 py-12 sm:py-16 text-center"
+        style={{ background: heroWash, borderColor: borderSoft }}
+      >
+        <div className="mx-auto max-w-[1240px]">
+          <p
+            className="mb-2 text-[12px] font-bold uppercase tracking-[0.1em]"
+            style={{ color: colors.tealInk }}
+          >
+            Contact us
+          </p>
+          <h1
+            className="font-display text-3xl font-bold sm:text-4xl"
+            style={{ color: colors.navy }}
+          >
+            Contact
+          </h1>
+          <p
+            className="mt-2 text-sm sm:text-base"
+            style={{ color: colors.body }}
+          >
+            Let&apos;s start a conversation
+          </p>
+        </div>
+      </section>
+
+      <section className="px-6 py-12 sm:py-16">
+        <div className="mx-auto max-w-[1240px]">
+          <div className="mb-9 text-center">
+            <p className="mb-2 text-[12px] font-bold uppercase tracking-[0.1em]" style={{ color: colors.tealInk }}>Get in touch</p>
+            <h2 className="font-display text-2xl font-bold sm:text-3xl" style={{ color: colors.navy }}>Contact &amp; Join Together</h2>
+            <p className="mx-auto mt-3 max-w-xl text-sm leading-6" style={{ color: colors.muted }}>
+              We&apos;re here to help you take the next step. Reach out to our team and we&apos;ll get back to you shortly.
             </p>
           </div>
-        </section>
 
-        <section className="py-20 px-6">
-          <div className="max-w-[1240px] mx-auto grid lg:grid-cols-[1fr_420px] gap-12">
-            <div>
-              <h2 className="font-display text-2xl font-bold mb-6" style={{ color: colors.navy }}>
-                Send Us a Message
-              </h2>
-
-              {sent ? (
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {contactInfo.map((c) => {
+              const cardContent = (
                 <div
-                  className="rounded-2xl p-12 text-center"
-                  style={{ backgroundColor: colors.surface, border: `1px solid ${colors.border}` }}
+                  className="group relative flex h-full flex-col justify-between overflow-hidden rounded-2xl p-5 text-white shadow-[0_8px_30px_rgba(0,189,184,0.18)] transition-all duration-300 hover:-translate-y-1 hover:shadow-[0_14px_38px_rgba(0,189,184,0.28)]"
+                  style={{ background: gradient }}
                 >
-                  <CheckCircle2 size={44} className="mx-auto mb-4 text-nm-teal-ink" aria-hidden="true" />
-                  <h3 className="font-bold text-xl mb-2" style={{ color: colors.navy }}>
-                    Message Sent!
-                  </h3>
-                  <p style={{ color: colors.muted }}>We&apos;ll get back to you within 24 hours.</p>
-                </div>
-              ) : (
-                <form onSubmit={onSubmit} className="space-y-4" noValidate>
-                  <div className="grid sm:grid-cols-2 gap-4">
-                    {(
-                      [
-                        { key: "name", label: "Full Name", type: "text", ph: "Your name" },
-                        { key: "email", label: "Email", type: "email", ph: "your@email.com" },
-                      ] as const
-                    ).map((f) => (
-                      <div key={f.key}>
-                        <label
-                          className="block text-xs font-semibold mb-1.5 uppercase tracking-wider"
-                          style={{ color: colors.muted }}
-                        >
-                          {f.label}
-                        </label>
-                        <input
-                          type={f.type}
-                          placeholder={f.ph}
-                          {...register(f.key)}
-                          className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all"
-                          style={inputStyle}
-                          onFocus={focus}
-                        />
-                        {errors[f.key] && (
-                          <p className="text-xs mt-1" style={{ color: "#dc2626" }}>
-                            {errors[f.key]?.message}
-                          </p>
-                        )}
-                      </div>
-                    ))}
-                  </div>
-
                   <div>
-                    <label
-                      className="block text-xs font-semibold mb-1.5 uppercase tracking-wider"
-                      style={{ color: colors.muted }}
-                    >
-                      Phone (optional)
-                    </label>
-                    <input
-                      type="tel"
-                      placeholder="+977-98XXXXXXXX"
-                      {...register("phone")}
-                      className="w-full px-4 py-3 rounded-xl text-sm outline-none transition-all"
-                      style={inputStyle}
-                      onFocus={focus}
-                    />
-                  </div>
-
-                  <div>
-                    <label
-                      className="block text-xs font-semibold mb-1.5 uppercase tracking-wider"
-                      style={{ color: colors.muted }}
-                    >
-                      Subject
-                    </label>
-                    <select
-                      {...register("courseInterest")}
-                      className="w-full px-4 py-3 rounded-xl text-sm outline-none appearance-none transition-all cursor-pointer"
-                      style={{
-                        ...inputStyle,
-                        color: subject ? colors.navy : colors.muted,
-                      }}
-                      onFocus={focus}
-                      onBlur={blur}
-                    >
-                      <option value="">Select a subject</option>
-                      <option>Course Enquiry</option>
-                      <option>Enrollment Help</option>
-                      <option>Enterprise Training</option>
-                      <option>Scholarship / Financial Aid</option>
-                      <option>Other</option>
-                    </select>
-                  </div>
-
-                  <div>
-                    <label
-                      className="block text-xs font-semibold mb-1.5 uppercase tracking-wider"
-                      style={{ color: colors.muted }}
-                    >
-                      Message
-                    </label>
-                    <textarea
-                      rows={5}
-                      required
-                      placeholder="Tell us what's on your mind…"
-                      {...register("message")}
-                      className="w-full px-4 py-3 rounded-xl text-sm outline-none resize-none transition-all"
-                      style={inputStyle}
-                      onFocus={focus}
-                    />
-                  </div>
-
-                  {submitError && (
-                    <p className="text-sm" style={{ color: "#dc2626" }}>
-                      {submitError}
-                    </p>
-                  )}
-
-                  <button
-                    type="submit"
-                    disabled={isSubmitting}
-                    className="font-bold px-8 py-4 rounded-xl text-white transition-all active:scale-[0.98]"
-                    style={{ background: gradient, boxShadow: `0 4px 20px ${colors.teal}40` }}
-                  >
-                    Send Message →
-                  </button>
-                </form>
-              )}
-            </div>
-
-            <div className="space-y-4">
-              <h2 className="font-display text-2xl font-bold mb-6" style={{ color: colors.navy }}>
-                Contact Info
-              </h2>
-
-              {contactInfo.map((c) => (
-                <div
-                  key={c.label}
-                  className="flex gap-4 items-start p-5 rounded-2xl"
-                  style={{ backgroundColor: colors.surface, border: `1px solid ${colors.border}` }}
-                >
-                  <c.icon size={22} aria-hidden="true" className="text-nm-teal-ink" />
-                  <div>
-                    <div
-                      className="text-xs font-bold uppercase tracking-wide mb-0.5"
-                      style={{ color: colors.muted }}
-                    >
+                    <div className="mb-3.5 inline-flex h-10 w-10 items-center justify-center rounded-xl bg-white/20 text-white backdrop-blur-sm transition-transform duration-300 group-hover:scale-110">
+                      <c.icon size={20} aria-hidden="true" />
+                    </div>
+                    <div className="text-[10.5px] font-bold uppercase tracking-[0.18em] text-white/80">
                       {c.label}
                     </div>
-                    <div className="font-semibold" style={{ color: colors.navy }}>
+                    <div className="mt-1.5 text-[13px] font-semibold leading-relaxed text-white">
                       {c.value}
                     </div>
                   </div>
                 </div>
-              ))}
+              );
 
-              <div
-                className="rounded-2xl overflow-hidden"
-                style={{ border: `1px solid ${colors.border}` }}
-              >
-                {/* `loading="lazy"` matters here: the Maps iframe pulls well over
-                    a megabyte, and it sits below the fold on the sidebar. */}
-                <iframe
-                  src={mapEmbedHref}
-                  title="Next Minds Infosys on Google Maps"
-                  className="w-full h-48 block border-0"
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  allowFullScreen
-                />
+              return c.href ? (
                 <a
-                  href={directionsHref}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 py-3 text-sm font-semibold transition-colors hover:bg-nm-surface"
-                  style={{ color: colors.navy, borderTop: `1px solid ${colors.border}` }}
+                  key={c.label}
+                  href={c.href}
+                  target={c.href.startsWith("http") ? "_blank" : undefined}
+                  rel={c.href.startsWith("http") ? "noopener noreferrer" : undefined}
+                  className="block h-full"
                 >
-                  <MapPin size={16} aria-hidden="true" />
-                  Get directions
+                  {cardContent}
                 </a>
-              </div>
+              ) : (
+                <div key={c.label} className="h-full">
+                  {cardContent}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      </section>
 
-              <div className="rounded-2xl p-5" style={{ background: heroGradient }}>
-                <h3 className="font-bold text-white mb-4">Quick Links</h3>
-                <div className="space-y-2">
-                  {quickLinks.map((l) => (
-                    <Link
-                      key={l.label}
-                      href={l.href}
-                      className="block text-sm py-2 px-4 rounded-lg transition-all"
-                      style={{
-                        backgroundColor: "rgba(255,255,255,0.08)",
-                        color: "rgba(255,255,255,0.85)",
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = `${colors.teal}30`;
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = "rgba(255,255,255,0.08)";
-                      }}
-                    >
-                      <l.icon size={16} aria-hidden="true" className="shrink-0" />
-                      {l.label}
-                    </Link>
+      <section id="enquiry" className="px-6 pb-16 sm:pb-20">
+        <div className="mx-auto grid max-w-[1240px] items-center gap-10 lg:grid-cols-[0.9fr_1.1fr]">
+          <div className="relative min-h-[260px] overflow-hidden bg-gradient-to-br from-teal-500 to-blue-600 p-8 text-white sm:min-h-[330px] sm:p-10">
+            <p className="mb-3 text-[10px] font-bold uppercase tracking-[0.24em] text-teal-100">Start a conversation</p>
+            <h2 className="max-w-xs font-display text-2xl font-bold sm:text-3xl">Chat With Live!</h2>
+            <p className="mt-3 max-w-xs text-sm leading-6 text-white/80">
+              Have a question? Our team is ready to help you find the right path.
+            </p>
+            <a href={contact.whatsapp} target="_blank" rel="noopener noreferrer" className="mt-7 inline-flex items-center gap-2 bg-white px-5 py-3 text-xs font-bold text-teal-600 transition-transform hover:-translate-y-0.5">
+              Chat on WhatsApp <span aria-hidden="true">-&gt;</span>
+            </a>
+            <div className="absolute -bottom-12 -right-10 h-40 w-40 rounded-full border-[24px] border-white/10" aria-hidden="true" />
+          </div>
+
+          <div>
+            <p className="mb-2 text-[10px] font-bold uppercase tracking-[0.25em] text-teal-600">Contact us</p>
+            <h2 className="font-display text-2xl font-bold text-navy-800 sm:text-3xl">Reach &amp; Get In Touch With Us!</h2>
+            <p className="mt-3 text-sm text-gray-500">Send us a message and we&apos;ll be in touch soon.</p>
+
+            {sent ? (
+              <div
+                className="mt-6 border border-gray-100 bg-white p-12 text-center"
+                style={{ backgroundColor: colors.surface, border: `1px solid ${colors.border}` }}
+              >
+                <CheckCircle2 size={44} className="mx-auto mb-4 text-nm-teal-ink" aria-hidden="true" />
+                <h3 className="font-bold text-xl mb-2" style={{ color: colors.navy }}>
+                  Message Sent!
+                </h3>
+                <p style={{ color: colors.muted }}>We&apos;ll get back to you within 24 hours.</p>
+              </div>
+            ) : (
+              <form onSubmit={onSubmit} className="mt-6 space-y-3" noValidate>
+                <div className="grid sm:grid-cols-2 gap-4">
+                  {(
+                    [
+                      { key: "name", label: "Full Name", type: "text", ph: "Your name" },
+                      { key: "email", label: "Email", type: "email", ph: "your@email.com" },
+                    ] as const
+                  ).map((f) => (
+                    <div key={f.key}>
+                      <label
+                        className="sr-only"
+                      >
+                        {f.label}
+                      </label>
+                      <input
+                        type={f.type}
+                        placeholder={f.ph}
+                        {...register(f.key)}
+                        className="w-full px-4 py-3 text-xs outline-none transition-all placeholder:text-gray-400"
+                        style={inputStyle}
+                        onFocus={focus}
+                      />
+                      {errors[f.key] && (
+                        <p className="text-xs mt-1" style={{ color: "#dc2626" }}>
+                          {errors[f.key]?.message}
+                        </p>
+                      )}
+                    </div>
                   ))}
                 </div>
-              </div>
-            </div>
+
+                <div>
+                  <label
+                    className="sr-only"
+                  >
+                    Phone (optional)
+                  </label>
+                  <input
+                    type="tel"
+                    placeholder="+977-98XXXXXXXX"
+                    {...register("phone")}
+                    className="w-full px-4 py-3 text-xs outline-none transition-all placeholder:text-gray-400"
+                    style={inputStyle}
+                    onFocus={focus}
+                  />
+                </div>
+
+                <div>
+                  <label
+                    className="sr-only"
+                  >
+                    Subject
+                  </label>
+                  <select
+                    {...register("courseInterest")}
+                    className="w-full appearance-none px-4 py-3 text-xs outline-none transition-all cursor-pointer"
+                    style={{
+                      ...inputStyle,
+                      color: subject ? colors.navy : colors.muted,
+                    }}
+                    onFocus={focus}
+                    onBlur={blur}
+                  >
+                    <option value="">Select a subject</option>
+                    <option>Course Enquiry</option>
+                    <option>Enrollment Help</option>
+                    <option>Enterprise Training</option>
+                    <option>Scholarship / Financial Aid</option>
+                    <option>Other</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label
+                    className="sr-only"
+                  >
+                    Message
+                  </label>
+                  <textarea
+                    rows={5}
+                    required
+                    placeholder="Tell us what's on your mind…"
+                    {...register("message")}
+                    className="w-full resize-none px-4 py-3 text-xs outline-none transition-all placeholder:text-gray-400"
+                    style={inputStyle}
+                    onFocus={focus}
+                  />
+                </div>
+
+                {submitError && (
+                  <p className="text-sm" style={{ color: "#dc2626" }}>
+                    {submitError}
+                  </p>
+                )}
+
+                <button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="inline-flex items-center gap-2 bg-teal-500 px-7 py-3 text-[11px] font-bold text-white transition-all hover:bg-teal-600 active:scale-[0.98]"
+                  style={{ background: gradient, boxShadow: `0 4px 20px ${colors.teal}40` }}
+                >
+                  Send Message <Send size={13} aria-hidden="true" />
+                </button>
+              </form>
+            )}
           </div>
-        </section>
-      </div>
-    </>
+        </div>
+      </section>
+
+      <section className="px-6 pb-0">
+        <div className="mx-auto max-w-[1240px] overflow-hidden rounded-2xl border border-gray-100 bg-white shadow-sm">
+          <iframe src={mapEmbedHref} title="Next Minds Infosys on Google Maps" className="block h-[280px] w-full border-0 sm:h-[360px]" loading="lazy" referrerPolicy="no-referrer-when-downgrade" allowFullScreen />
+          <a href={directionsHref} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 border-t border-gray-100 py-3 text-xs font-bold text-teal-600 hover:bg-gray-50">
+            <MapPin size={14} aria-hidden="true" /> Get directions
+          </a>
+        </div>
+      </section>
+    </div>
   );
 }

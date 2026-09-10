@@ -25,9 +25,9 @@ const contactRows = [
 ];
 
 /** Column heading - same treatment in all three link columns. */
-function ColTitle({ children }: { children: React.ReactNode }) {
+function ColTitle({ children, dark }: { children: React.ReactNode; dark?: boolean }) {
   return (
-    <div className="mb-3.5 text-[13.5px] font-extrabold" style={{ color: colors.navy }}>
+    <div className="mb-3.5 text-[13.5px] font-extrabold" style={{ color: dark ? "#ffffff" : colors.navy }}>
       {children}
     </div>
   );
@@ -35,7 +35,15 @@ function ColTitle({ children }: { children: React.ReactNode }) {
 
 const linkClass = "text-[13.5px] transition-colors hover:text-nm-teal-ink";
 
-export default function Footer({ courses }: { courses: CourseCard[] }) {
+export default function Footer({
+  courses,
+  tone = "light",
+}: {
+  courses: CourseCard[];
+  tone?: "light" | "dark";
+}) {
+  const dark = tone === "dark";
+
   return (
     // White with a hairline rule, per the design. The previous footer sat on a
     // tinted panel behind a large teal/blue blur; the design ends the page on
@@ -43,14 +51,14 @@ export default function Footer({ courses }: { courses: CourseCard[] }) {
     <footer
       className="px-6 pt-[50px] pb-[26px]"
       style={{
-        background: "linear-gradient(180deg, #ffffff 0%, #ffffff 40%, #e6f7f5 70%, #d6f0fa 100%)",
+        background: dark ? "#0b1830" : "linear-gradient(180deg, #ffffff 0%, #ffffff 40%, #e6f7f5 70%, #d6f0fa 100%)",
         borderTop: `1px solid ${borderSoft}`,
       }}
     >
       <div className="mx-auto grid max-w-[1240px] grid-cols-1 gap-9 md:grid-cols-2 lg:grid-cols-[1.6fr_1fr_1fr_1.3fr]">
         <div>
           <Image
-            src="/assets/logo-horizontal.png"
+            src={dark ? "/assets/logo-horizontal-white.png" : "/assets/logo-horizontal.png"}
             alt="Next Minds Infosys"
             width={1959}
             height={356}
@@ -59,7 +67,7 @@ export default function Footer({ courses }: { courses: CourseCard[] }) {
           />
           <p
             className="mb-4 max-w-[280px] text-[13.5px] leading-[1.6]"
-            style={{ color: colors.muted }}
+            style={{ color: dark ? "rgba(255,255,255,0.62)" : colors.muted }}
           >
             Empowering Nepal&apos;s future tech leaders with world-class IT training, mentorship,
             and career support.
@@ -92,14 +100,14 @@ export default function Footer({ courses }: { courses: CourseCard[] }) {
         </div>
 
         <div>
-          <ColTitle>Courses</ColTitle>
+          <ColTitle dark={dark}>Courses</ColTitle>
           <div className="flex flex-col gap-2.5">
             {courses.map((c) => (
               <Link
                 key={c.id}
                 href={`/courses/${c.slug}`}
                 className={linkClass}
-                style={{ color: colors.muted }}
+                style={{ color: dark ? "rgba(255,255,255,0.62)" : colors.muted }}
               >
                 {c.title}
               </Link>
@@ -108,14 +116,14 @@ export default function Footer({ courses }: { courses: CourseCard[] }) {
         </div>
 
         <div>
-          <ColTitle>Company</ColTitle>
+          <ColTitle dark={dark}>Company</ColTitle>
           <div className="flex flex-col gap-2.5">
             {companyFooterLinks.map((l) => (
               <Link
                 key={l.href}
                 href={l.href}
                 className={linkClass}
-                style={{ color: colors.muted }}
+                style={{ color: dark ? "rgba(255,255,255,0.62)" : colors.muted }}
               >
                 {l.label}
               </Link>
@@ -124,13 +132,13 @@ export default function Footer({ courses }: { courses: CourseCard[] }) {
         </div>
 
         <div>
-          <ColTitle>Contact</ColTitle>
+          <ColTitle dark={dark}>Contact</ColTitle>
           <div className="flex flex-col gap-2.5">
             {contactRows.map((r) => (
               <div
                 key={r.text}
                 className="flex gap-2.5 text-[13.5px]"
-                style={{ color: colors.muted }}
+                style={{ color: dark ? "rgba(255,255,255,0.62)" : colors.muted }}
               >
                 <r.icon
                   size={15}
@@ -169,17 +177,18 @@ export default function Footer({ courses }: { courses: CourseCard[] }) {
 
       <div
         className="mx-auto mt-10 flex max-w-[1240px] flex-col items-center justify-between gap-3 pt-6 sm:flex-row"
-        style={{ borderTop: `1px solid ${borderSoft}` }}
+        style={{ borderTop: `1px solid ${dark ? "rgba(255,255,255,0.12)" : borderSoft}` }}
       >
         <div className="text-[12.5px]" style={{ color: colors.mutedSoft }}>
           © {new Date().getFullYear()} Next Minds Infosys Pvt. Ltd. All rights reserved.
         </div>
         <div className="flex gap-5 text-[12.5px]" style={{ color: colors.mutedSoft }}>
-          {["Privacy Policy", "Terms of Service"].map((t) => (
-            <a key={t} href="#" className="transition-colors hover:text-nm-teal-ink">
-              {t}
-            </a>
-          ))}
+          <Link href="/privacy" className="transition-colors hover:text-nm-teal-ink">
+            Privacy Policy
+          </Link>
+          <Link href="/terms" className="transition-colors hover:text-nm-teal-ink">
+            Terms of Service
+          </Link>
         </div>
       </div>
     </footer>

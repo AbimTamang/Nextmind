@@ -1,6 +1,7 @@
 "use client";
 
 import { useRef, useState } from "react";
+import Image from "next/image";
 import { contact } from "@/lib/contact";
 import { Award, Building2, CheckCircle, Globe, Mail, PartyPopper, Phone, Shield, Target, TrendingUp, Users, Zap } from "lucide-react";
 import { motion, useInView, AnimatePresence } from "framer-motion";
@@ -17,6 +18,7 @@ import { BlobBackground } from "@/components/ui/blob-background";
 import { SpotlightCard } from "@/components/ui/spotlight-card";
 import { SectionEyebrow } from "@/components/SectionEyebrow";
 import type { CourseCard } from "@/db/queries";
+import { borderSoft, colors, heroWash } from "@/lib/theme";
 import EnrollModal from "./EnrollModal";
 
 const fadeUp = {
@@ -81,6 +83,7 @@ const sectors = [
     icon: Building2,
     title: "For Colleges & Universities",
     description: "Bridge the gap between academic learning and industry requirements",
+    image: "/assets/enterprise/university.jpg",
     features: [
       "Industry-relevant curriculum in AI, cybersecurity, web development, and design",
       "Workshops & bootcamps with hands-on project-based learning",
@@ -98,6 +101,7 @@ const sectors = [
     icon: Users,
     title: "For Corporate Teams",
     description: "Build future-ready teams that drive innovation and growth",
+    image: "/assets/enterprise/corporate.jpg",
     features: [
       "Custom upskilling and reskilling programs aligned with business goals",
       "Leadership development training for managers and team leads",
@@ -116,6 +120,7 @@ const sectors = [
     icon: Globe,
     title: "For Government Agencies",
     description: "Modernize public services with digital transformation",
+    image: "/assets/enterprise/government.jpg",
     features: [
       "Citizen-centric digital service design and delivery",
       "IT infrastructure and cybersecurity training",
@@ -128,6 +133,7 @@ const sectors = [
     icon: Target,
     title: "For NGOs & Foundations",
     description: "Enhance mission effectiveness with technology and innovation",
+    image: "/assets/enterprise/ngo.jpg",
     features: [
       "Mission-aligned technology strategies and implementation",
       "Data-driven decision making and impact measurement",
@@ -376,8 +382,11 @@ export default function EnterprisePage({ courses }: { courses: CourseCard[] }) {
   return (
     <div className="min-h-screen bg-white pt-16">
       {/* ── Hero ── */}
-      <section className="nm-dark-panel relative overflow-hidden px-4 py-24 sm:px-6 lg:px-8">
-        <BlobBackground variant="dark" />
+      <section
+        className="relative overflow-hidden border-b px-4 py-20 sm:px-6 lg:px-8"
+        style={{ background: heroWash, borderColor: borderSoft }}
+      >
+        <BlobBackground variant="teal-blue" />
 
         <motion.div
           ref={heroRef}
@@ -388,14 +397,15 @@ export default function EnterprisePage({ courses }: { courses: CourseCard[] }) {
         >
           <motion.div
             variants={fadeUp}
-            className="mb-6 inline-flex items-center gap-2 rounded-full border border-nm-teal/40 bg-nm-teal/10 px-4 py-1.5 text-sm font-bold text-nm-teal"
+            className="mb-6 inline-flex items-center gap-2 rounded-full border border-nm-teal/30 bg-nm-teal/10 px-4 py-1.5 text-sm font-bold text-nm-teal-ink"
           >
             Enterprise Learning Solutions
           </motion.div>
 
           <motion.h1
             variants={fadeUp}
-            className="mb-6 font-display text-5xl font-bold text-white md:text-6xl"
+            className="mb-6 font-display text-5xl font-bold md:text-6xl"
+            style={{ color: colors.navy }}
           >
             Build a <span className="nm-gradient-text">Smarter</span>,{" "}
             <span className="nm-gradient-text">Stronger</span>, More Future-Ready Team
@@ -403,9 +413,10 @@ export default function EnterprisePage({ courses }: { courses: CourseCard[] }) {
 
           <motion.p
             variants={fadeUp}
-            className="mx-auto mb-10 max-w-3xl text-lg leading-relaxed text-white/65"
+            className="mx-auto mb-10 max-w-3xl text-lg leading-relaxed"
+            style={{ color: colors.body }}
           >
-            Your one-stop partner for Learning & Development. We help organizations grow through
+            Your one-stop partner for Learning &amp; Development. We help organizations grow through
             purposeful learning—enabling teams to upskill, reskill, and stay competitive in the
             fast-changing tech landscape.
           </motion.p>
@@ -418,7 +429,7 @@ export default function EnterprisePage({ courses }: { courses: CourseCard[] }) {
               size="lg"
               variant="outline"
               asChild
-              className="border-white/30 text-white hover:bg-white/10"
+              className="border-2 border-teal-500 text-teal-700 hover:bg-teal-50"
             >
               <a href="#contact">View Sample Programs</a>
             </Button>
@@ -434,10 +445,11 @@ export default function EnterprisePage({ courses }: { courses: CourseCard[] }) {
                 key={stat.label}
                 whileHover={{ y: -4, scale: 1.02 }}
                 transition={{ type: "spring", stiffness: 360, damping: 24 }}
-                className="rounded-2xl border border-white/10 bg-white/5 p-6 text-left backdrop-blur-md"
+                className="rounded-2xl border bg-white/80 p-6 text-left shadow-[0_4px_20px_rgba(25,40,70,0.05)] backdrop-blur-md"
+                style={{ borderColor: borderSoft }}
               >
                 <div className="nm-gradient-text mb-1 text-3xl font-bold">{stat.value}</div>
-                <p className="text-sm text-white/60">{stat.label}</p>
+                <p className="text-sm font-medium" style={{ color: colors.muted }}>{stat.label}</p>
               </motion.div>
             ))}
           </motion.div>
@@ -478,7 +490,7 @@ export default function EnterprisePage({ courses }: { courses: CourseCard[] }) {
       </section>
 
       {/* ── Sectors ── */}
-      <section className="bg-nm-surface px-4 py-24 sm:px-6 lg:px-8">
+      <section className="bg-nm-surface px-4 py-14 sm:px-6 lg:px-8">
         <div className="mx-auto max-w-[1240px]">
           <AnimatedSection>
             <motion.div variants={fadeUp}>
@@ -493,68 +505,100 @@ export default function EnterprisePage({ courses }: { courses: CourseCard[] }) {
               />
             </motion.div>
 
-            <div className="space-y-7">
-              {sectors.map((sector, i) => (
-                <motion.div
-                  key={sector.title}
-                  variants={fadeUp}
-                  whileHover={{ y: -4 }}
-                  transition={{ type: "spring", stiffness: 300, damping: 28 }}
-                >
-                  <Card
-                    className={`overflow-hidden shadow-[0_2px_20px_rgba(13,45,82,0.07)] transition-shadow duration-300 hover:shadow-[0_16px_48px_rgba(0,189,184,0.15)] ${
-                      sector.flagship ? "ring-2 ring-nm-teal/50" : ""
-                    }`}
+            <div className="space-y-8">
+              {sectors.map((sector, i) => {
+                const isImageRight = i % 2 === 0;
+
+                return (
+                  <motion.div
+                    key={sector.title}
+                    variants={fadeUp}
+                    whileHover={{ y: -4 }}
+                    transition={{ type: "spring", stiffness: 300, damping: 28 }}
                   >
-                    <div className="grid md:grid-cols-3">
-                      <div
-                        className={`nm-gradient order-1 p-8 text-white ${i % 2 === 1 ? "md:order-2" : "md:order-1"}`}
-                      >
-                        <div className="mb-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-white/20">
-                          <sector.icon size={28} />
-                        </div>
-                        {sector.flagship && (
-                          <span className="mb-3 inline-block rounded-full bg-white/20 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider">
-                            Most Requested
-                          </span>
-                        )}
-                        <h3 className="mb-3 text-2xl font-bold">{sector.title}</h3>
-                        <p className="text-sm leading-relaxed text-white/80">{sector.description}</p>
-                      </div>
-                      <div
-                        className={`order-2 p-8 md:col-span-2 ${i % 2 === 1 ? "md:order-1" : "md:order-2"}`}
-                      >
-                        <h4 className="mb-4 text-sm font-semibold tracking-wider text-nm-body uppercase">
-                          What We Offer
-                        </h4>
-                        <ul className="mb-6 space-y-3">
-                          {sector.features.map((feature) => (
-                            <li key={feature} className="flex items-start gap-3">
-                              <CheckCircle size={16} className="mt-0.5 flex-shrink-0 text-nm-teal" />
-                              <span className="text-sm leading-relaxed text-nm-body">{feature}</span>
-                            </li>
-                          ))}
-                        </ul>
-                        <div className="border-t border-nm-border pt-4">
-                          <p className="mb-3 text-xs font-medium tracking-wider text-nm-muted uppercase">
-                            Sample Programs
-                          </p>
-                          <div className="flex flex-wrap gap-2">
-                            {sector.courses.map((course) => (
-                              <span
-                                key={course}
-                                className="rounded-full border border-nm-border bg-nm-surface px-2.5 py-1 text-xs font-medium text-nm-body"
-                              >
-                                {course}
-                              </span>
-                            ))}
+                    <Card
+                      className={`overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-[0_4px_24px_rgba(13,45,82,0.06)] transition-all duration-300 hover:shadow-[0_16px_48px_rgba(0,189,184,0.14)] ${
+                        sector.flagship ? "ring-2 ring-nm-teal/50" : ""
+                      }`}
+                    >
+                      <div className="grid grid-cols-1 items-stretch md:grid-cols-12">
+                        {/* Text Content */}
+                        <div
+                          className={`flex flex-col justify-between p-6 sm:p-8 md:col-span-7 lg:p-10 ${
+                            isImageRight ? "md:order-1" : "md:order-2"
+                          }`}
+                        >
+                          <div>
+                            <div className="mb-4 flex flex-wrap items-center gap-3">
+                              <div className="nm-gradient flex h-11 w-11 items-center justify-center rounded-xl text-white shadow-md shadow-nm-teal/30">
+                                <sector.icon size={22} />
+                              </div>
+                              {sector.flagship && (
+                                <span className="nm-gradient inline-block rounded-full px-3 py-1 text-[10px] font-bold uppercase tracking-wider text-white shadow-sm shadow-nm-teal/20">
+                                  Most Requested
+                                </span>
+                              )}
+                            </div>
+
+                            <h3 className="font-display text-2xl font-bold tracking-tight text-nm-navy sm:text-3xl">
+                              {sector.title}
+                            </h3>
+                            <p className="mt-2 text-sm leading-relaxed text-nm-body sm:text-base">
+                              {sector.description}
+                            </p>
+
+                            <div className="mt-6">
+                              <h4 className="mb-3 text-[11px] font-bold uppercase tracking-wider text-nm-muted">
+                                What We Offer
+                              </h4>
+                              <ul className="grid gap-2.5 sm:grid-cols-2">
+                                {sector.features.map((feature) => (
+                                  <li key={feature} className="flex items-start gap-2.5 text-xs leading-relaxed text-nm-body">
+                                    <CheckCircle size={15} className="mt-0.5 flex-shrink-0 text-nm-teal" />
+                                    <span>{feature}</span>
+                                  </li>
+                                ))}
+                              </ul>
+                            </div>
+                          </div>
+
+                          <div className="mt-8 border-t border-nm-border pt-4">
+                            <p className="mb-2.5 text-[10px] font-bold uppercase tracking-wider text-nm-muted">
+                              Sample Programs
+                            </p>
+                            <div className="flex flex-wrap gap-1.5">
+                              {sector.courses.map((course) => (
+                                <span
+                                  key={course}
+                                  className="rounded-full border border-nm-border bg-nm-surface px-3 py-1 text-xs font-medium text-nm-body transition-colors hover:border-nm-teal/40 hover:text-nm-teal-ink"
+                                >
+                                  {course}
+                                </span>
+                              ))}
+                            </div>
                           </div>
                         </div>
+
+                        {/* Image Column */}
+                        <div
+                          className={`relative min-h-[260px] md:min-h-full md:col-span-5 overflow-hidden ${
+                            isImageRight ? "md:order-2" : "md:order-1"
+                          }`}
+                        >
+                          <Image
+                            src={sector.image}
+                            alt={sector.title}
+                            fill
+                            sizes="(max-width: 768px) 100vw, 42vw"
+                            className="object-cover transition-transform duration-500 hover:scale-105"
+                          />
+                          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent md:hidden" />
+                        </div>
                       </div>
-                    </div>
-                  </Card>
-                </motion.div>
-              ))}
+                    </Card>
+                  </motion.div>
+                );
+              })}
             </div>
           </AnimatedSection>
         </div>

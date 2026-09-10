@@ -13,7 +13,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,md,json,yml}\"",
     "db:migrate": "pnpm --filter @nextminds/db migrate",
     "db:sync": "pnpm --filter @nextminds/db sync",
-    "db:seed": "pnpm --filter @nextminds/db seed",
+    "db:seed": "pnpm --filter @nextminds/web exec tsx src/db/seed.ts",
     "clean": "turbo run clean && rm -rf node_modules"
   },
   "devDependencies": {

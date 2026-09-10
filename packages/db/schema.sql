@@ -96,6 +96,7 @@ CREATE TABLE public."Account" (
     scope text,
     "idToken" text,
     password text,
+    issuer text,
     "createdAt" timestamp(3) without time zone DEFAULT CURRENT_TIMESTAMP NOT NULL,
     "updatedAt" timestamp(3) without time zone NOT NULL
 );

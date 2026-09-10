@@ -1,14 +1,14 @@
-﻿import SiteLayout from "@/components/SiteLayout";
+import SiteLayout from "@/components/SiteLayout";
 import PrivacyContent from "./privacy-content";
 
 export const metadata = {
-  title: "Privacy Policy",
+  title: "Privacy Policy | Next Minds Infosys",
   description:
-    "How Next Minds Infosys collects, uses, and protects your personal information when you use our website or services.",
+    "Learn how Next Minds Infosys collects, protects, and handles student data, course enrollments, and website information in compliance with modern privacy standards.",
   openGraph: {
-    title: "Privacy Policy",
+    title: "Privacy Policy | Next Minds Infosys",
     description:
-      "How Next Minds Infosys collects, uses, and protects your personal information when you use our website or services.",
+      "Learn how Next Minds Infosys collects, protects, and handles student data, course enrollments, and website information in compliance with modern privacy standards.",
   },
 };
 

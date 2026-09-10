@@ -24,7 +24,7 @@ import {
 import type { CourseCard, PublicCourse } from "@/db/queries";
 import { contact, telHref } from "@/lib/contact";
 import { npr } from "@/lib/utils";
-import { colors, gradient, heroGradient } from "@/lib/theme";
+import { borderSoft, colors, gradient, heroGradient, heroWash } from "@/lib/theme";
 import { publicMediaSrc } from "@/lib/media-image";
 import { CourseStickyBar } from "./CourseStickyBar";
 import EnrollModal from "./EnrollModal";
@@ -78,6 +78,10 @@ function tabFor(heading: string) {
   if (/career scope|salary|realistic expectation/.test(h)) return "career";
   if (/fee|batch|payment|pricing|certification/.test(h)) return "pricing";
   if (/tools|project|lab/.test(h)) return "projects";
+  // Mistake sections have their own dedicated renderer below the pricing block;
+  // returning a distinct value here keeps them out of the overview loop so they
+  // don't get rendered twice.
+  if (/mistake/.test(h)) return "mistakes";
   return "overview";
 }
 
@@ -454,28 +458,31 @@ export default function CoursePageContent({ course, courses }: CoursePageContent
   return (
     <>
       {/* ---------------------------------------------------------------- hero */}
-      <section className="relative px-6 pt-28 pb-0" style={{ background: heroGradient }}>
+      <section
+        className="relative border-b px-6 pt-28 pb-0"
+        style={{ background: heroWash, borderColor: borderSoft }}
+      >
         <div className="mx-auto grid max-w-[1240px] gap-10 pb-14 lg:grid-cols-[1fr_360px]">
           <div className="min-w-0">
-            <nav className="mb-6 flex flex-wrap items-center gap-2 text-sm text-white/55">
-              <Link href="/" className="transition-colors hover:text-white">Home</Link>
+            <nav className="mb-6 flex flex-wrap items-center gap-2 text-sm" style={{ color: colors.muted }}>
+              <Link href="/" className="transition-colors hover:text-nm-teal-ink">Home</Link>
               <span>/</span>
-              <Link href="/courses" className="transition-colors hover:text-white">Courses</Link>
+              <Link href="/courses" className="transition-colors hover:text-nm-teal-ink">Courses</Link>
               <span>/</span>
-              <span className="text-white/90">{course.title}</span>
+              <span className="font-medium" style={{ color: colors.navy }}>{course.title}</span>
             </nav>
 
             <div className="mb-5 flex flex-wrap gap-2">
               <span
                 className="rounded-full px-3 py-1 text-xs font-semibold"
-                style={{ backgroundColor: `${colors.teal}22`, color: colors.teal, border: `1px solid ${colors.teal}55` }}
+                style={{ backgroundColor: `${colors.teal}18`, color: colors.tealInk, border: `1px solid ${colors.teal}45` }}
               >
                 {course.category}
               </span>
               {course.badge && (
                 <span
                   className="rounded-full px-3 py-1 text-xs font-semibold"
-                  style={{ backgroundColor: `${colors.teal}22`, color: colors.teal, border: `1px solid ${colors.teal}55` }}
+                  style={{ backgroundColor: `${colors.teal}18`, color: colors.tealInk, border: `1px solid ${colors.teal}45` }}
                 >
                   {course.badge}
                 </span>
@@ -483,25 +490,28 @@ export default function CoursePageContent({ course, courses }: CoursePageContent
             </div>
 
             <h1
-              className="font-display font-bold leading-[1.12] text-white"
-              style={{ fontSize: "clamp(2rem,4vw,2.8rem)" }}
+              className="font-display font-bold leading-[1.12]"
+              style={{ fontSize: "clamp(2rem,4vw,2.8rem)", color: colors.navy }}
             >
               {headline.lead}
               {headline.accent && (
-                <span style={{ color: colors.teal }}>{headline.accent}</span>
+                <span className="nm-gradient-text ml-2">{headline.accent}</span>
               )}
             </h1>
 
-            <p className="mt-5 max-w-2xl leading-relaxed text-white/70">{course.description}</p>
+            <p className="mt-5 max-w-2xl text-base leading-relaxed" style={{ color: colors.body }}>
+              {course.description}
+            </p>
 
             <div className="mt-7 flex flex-wrap gap-2.5">
               {facts.map((f) => (
                 <span
                   key={f.label}
-                  className="inline-flex items-center gap-2 rounded-lg border border-white/15 bg-white/[0.07] px-3.5 py-2 text-sm text-white/60"
+                  className="inline-flex items-center gap-2 rounded-xl border bg-white/85 px-3.5 py-2 text-sm shadow-sm backdrop-blur-sm"
+                  style={{ borderColor: borderSoft, color: colors.muted }}
                 >
-                  <f.icon size={14} aria-hidden="true" />
-                  {f.label}: <strong className="font-semibold text-white">{f.value}</strong>
+                  <f.icon size={14} aria-hidden="true" style={{ color: colors.tealInk }} />
+                  {f.label}: <strong className="font-semibold" style={{ color: colors.navy }}>{f.value}</strong>
                 </span>
               ))}
             </div>
@@ -510,15 +520,15 @@ export default function CoursePageContent({ course, courses }: CoursePageContent
               <button
                 type="button"
                 onClick={() => setModalOpen(true)}
-                className="min-h-[48px] rounded-xl px-8 py-3.5 text-base font-bold text-white transition-all active:scale-95"
-                style={{ background: gradient, boxShadow: `0 6px 24px ${colors.teal}45` }}
+                className="min-h-[48px] rounded-xl px-8 py-3.5 text-base font-bold text-white shadow-lg shadow-teal-500/20 transition-all active:scale-95"
+                style={{ background: gradient }}
               >
                 Enroll Now
               </button>
               {course.syllabusUrl && (
                 <a
                   href={course.syllabusUrl}
-                  className="min-h-[48px] inline-flex items-center gap-2 rounded-xl border border-white/25 px-8 py-3.5 text-base font-semibold text-white transition-all hover:bg-white/10"
+                  className="min-h-[48px] inline-flex items-center gap-2 rounded-xl border-2 border-teal-500 bg-white px-8 py-3.5 text-base font-semibold text-teal-700 transition-all hover:bg-teal-50"
                 >
                   <FileText size={17} aria-hidden="true" />
                   Download Syllabus
@@ -526,7 +536,7 @@ export default function CoursePageContent({ course, courses }: CoursePageContent
               )}
               <Link
                 href="/contact"
-                className="min-h-[48px] inline-flex items-center gap-2 rounded-xl border border-white/25 px-8 py-3.5 text-base font-semibold text-white transition-all hover:bg-white/10"
+                className="min-h-[48px] inline-flex items-center gap-2 rounded-xl border border-slate-300 bg-white px-8 py-3.5 text-base font-semibold text-nm-navy transition-all hover:bg-slate-50"
               >
                 <Phone size={17} aria-hidden="true" />
                 Book Free Counselling
@@ -537,8 +547,8 @@ export default function CoursePageContent({ course, courses }: CoursePageContent
           {/* Sticky pricing card */}
           <aside className="lg:sticky lg:top-28 lg:self-start">
             <div
-              className="overflow-hidden rounded-2xl bg-white"
-              style={{ boxShadow: "0 24px 64px rgba(6,26,46,0.28)" }}
+              className="overflow-hidden rounded-2xl border bg-white"
+              style={{ boxShadow: "0 16px 48px rgba(13,45,82,0.12)", borderColor: borderSoft }}
             >
               <div className="h-1.5" style={{ background: gradient }} />
               <div className="p-6">

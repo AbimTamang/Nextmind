@@ -5,7 +5,13 @@ import { getCourseCards } from "@/db/queries";
 import { SiteSetting } from "@nextminds/db";
 import { SITE_SETTING_ID } from "@nextminds/db";
 
-export default async function SiteLayout({ children }: { children: React.ReactNode }) {
+export default async function SiteLayout({
+  children,
+  footerTone = "light",
+}: {
+  children: React.ReactNode;
+  footerTone?: "light" | "dark";
+}) {
   const [courses, siteSetting] = await Promise.all([
     getCourseCards(),
     SiteSetting.findByPk(SITE_SETTING_ID),
@@ -31,7 +37,7 @@ export default async function SiteLayout({ children }: { children: React.ReactNo
       </a>
       <Navbar />
       <main id="main">{children}</main>
-      <Footer courses={courses} />
+      <Footer courses={courses} tone={footerTone} />
     </>
   );
 }

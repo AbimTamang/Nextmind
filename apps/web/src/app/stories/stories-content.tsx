@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { successStories, testimonials } from "@/data/courses";
-import { colors, gradient, heroGradient } from "@/lib/theme";
+import { borderSoft, colors, gradient, heroWash } from "@/lib/theme";
 import { BookOpen, Star, Target, UserRound, Wallet } from "lucide-react";
 
 // ─── Stats ────────────────────────────────────────────────────────────────────
@@ -30,28 +30,31 @@ export default function StoriesPage() {
       <div className="pt-16 min-h-screen" style={{ backgroundColor: colors.bg }}>
 
         {/* ── Hero ── */}
-        <section className="py-20 px-6" style={{ background: heroGradient }}>
+        <section
+          className="border-b px-6 py-20"
+          style={{ background: heroWash, borderColor: borderSoft }}
+        >
           <div className="max-w-[1240px] mx-auto text-center">
             <div
               className="inline-flex items-center gap-2 border rounded-full px-4 py-1.5 text-xs font-bold tracking-widest uppercase mb-6"
               style={{
-                backgroundColor: `${colors.teal}20`,
+                backgroundColor: `${colors.teal}18`,
                 borderColor: `${colors.teal}40`,
-                color: colors.teal,
+                color: colors.tealInk,
               }}
             >
               Success Stories &amp; Testimonials
             </div>
             <h1
-              className="font-display font-bold text-white mb-4"
-              style={{ fontSize: "clamp(2rem,4vw,3.5rem)" }}
+              className="font-display font-bold mb-4"
+              style={{ fontSize: "clamp(2rem,4vw,3.5rem)", color: colors.navy }}
             >
               Real People.{" "}
-              <span style={{ color: colors.teal }}>Real Careers.</span>
+              <span className="nm-gradient-text">Real Careers.</span>
             </h1>
             <p
-              className="text-lg max-w-xl mx-auto mb-10"
-              style={{ color: "rgba(255,255,255,0.65)" }}
+              className="text-base sm:text-lg max-w-xl mx-auto mb-10 leading-relaxed"
+              style={{ color: colors.body }}
             >
               From beginners to employed IT professionals — meet the graduates
               who changed their lives through Next Minds, and hear what they
@@ -59,11 +62,13 @@ export default function StoriesPage() {
             </p>
 
             {/* Rating stats */}
-            <div className="flex justify-center gap-8">
+            <div className="flex justify-center gap-8 sm:gap-12">
               {ratingStats.map((s) => (
                 <div key={s.l}>
-                  <div className="font-display font-bold text-2xl text-white">{s.n}</div>
-                  <div className="text-xs" style={{ color: "rgba(255,255,255,0.55)" }}>
+                  <div className="font-display font-bold text-2xl sm:text-3xl" style={{ color: colors.navy }}>
+                    {s.n}
+                  </div>
+                  <div className="text-xs sm:text-sm font-medium mt-0.5" style={{ color: colors.muted }}>
                     {s.l}
                   </div>
                 </div>
